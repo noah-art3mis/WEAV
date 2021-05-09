@@ -12,7 +12,7 @@ public class CA : MonoBehaviour
     int screenHeight;
     int arraySize;
     public GameObject image;
-    public Transform parent;
+    GameObject parent = null;
     float pixelDistance = 0.01f;
 
     //parameters
@@ -26,28 +26,40 @@ public class CA : MonoBehaviour
     public int[] ruleset;
 
 
-    void Start()
+    private void Start()
     {
         _camera = Camera.main;
         screenWidth = Screen.width;
         screenHeight = Screen.height;
-        arraySize = screenWidth / resolution;
+        arraySize = maxGenerations;
 
         _camera.transform.position = new Vector2(arraySize / 2 * pixelDistance, -maxGenerations / 2 * pixelDistance);
-        _camera.orthographicSize = maxGenerations / 2 * pixelDistance;
+        //fits camera vertically
+        _camera.orthographicSize = maxGenerations * pixelDistance * 0.5f;
+        //fits camera horizontally https://www.youtube.com/watch?v=3xXlnSetHPM doesnt work
+        //_camera.orthographicSize = arraySize * pixelDistance  * screenHeight / screenWidth * 0.5f;
 
-        ruleset = new int[8];
-        cells = new int[arraySize];
-        nextgen = new int[arraySize];
 
+
+    }
+
+    public void Run()
+    {
+        Reset();
         SetRules();
         SetFirstGeneration();
         UpdateCells();
     }
 
-    private void Update()
+    private void Reset()
     {
-        //if event run then run
+        ruleset = new int[8];
+        cells = new int[arraySize];
+        nextgen = new int[arraySize];
+
+        Destroy(GameObject.Find("Cell Container"));
+        parent = new GameObject("Cell Container");
+        parent.transform.parent = transform;
     }
 
     private void SetRules()
@@ -58,15 +70,15 @@ public class CA : MonoBehaviour
             {
                 ruleset[i] = UnityEngine.Random.Range(0, 2);
             }
-            //convert to decimal
-            //draw
         }
         else
         {
-            //ruleset = new int [8] { 0, 0, 0, 1, 0, 0, 1, 0 }; //18
+            //draw from UI
+            //convert
         }
 
-
+        //convert to decimal
+        //draw on ui
     }
 
     private void SetFirstGeneration()
@@ -84,7 +96,7 @@ public class CA : MonoBehaviour
         }
     }
 
-    void UpdateCells()
+    private void UpdateCells()
     {
         for (int generation = 0; generation < maxGenerations; generation++)
         {
@@ -124,7 +136,7 @@ public class CA : MonoBehaviour
         {
             if (cells[i] == 1)
             {
-                Instantiate(image, new Vector2(i * pixelDistance, -yPos * pixelDistance), Quaternion.identity, parent);
+                Instantiate(image, new Vector2(i * pixelDistance, -yPos * pixelDistance), Quaternion.identity, parent.transform);
             }
         }
     }
