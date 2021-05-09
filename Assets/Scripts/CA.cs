@@ -10,25 +10,35 @@ public class CA : MonoBehaviour
     int[] nextgen;
     int screenWidth;
     int screenHeight;
-    int generation = 0;
+    int arraySize;
+    public GameObject image;
+    public Transform parent;
+    float pixelDistance = 0.01f;
 
     //parameters
-    public GameObject image;
-    //public float repeatRate = 0.1f;
     public bool randomStart = true;
     public bool randomRuleset = true;
     //public bool scrolling = false;
-    //public int resolution;
-    public int[] ruleset;
     
+    public int maxGenerations = 100;
+    public int resolution = 10;
+    //public float repeatRate = 0.1f;
+    public int[] ruleset;
+
+
     void Start()
     {
         _camera = Camera.main;
         screenWidth = Screen.width;
         screenHeight = Screen.height;
-        _camera.transform.position = new Vector2(screenWidth / 2, -screenHeight / 2);
-        cells = new int[screenWidth];
-        nextgen = new int[screenWidth];
+        arraySize = screenWidth / resolution;
+
+        _camera.transform.position = new Vector2(arraySize / 2 * pixelDistance, -screenHeight / 2);
+
+        ruleset = new int[8];
+        cells = new int[arraySize];
+        nextgen = new int[arraySize];
+
         SetRules();
         SetFirstGeneration();
         UpdateCells();
@@ -52,7 +62,7 @@ public class CA : MonoBehaviour
         }
         else
         {
-            //ruleset = { 0, 0, 0, 1, 0, 0, 1, 0 }; //18
+            //ruleset = new int [8] { 0, 0, 0, 1, 0, 0, 1, 0 }; //18
         }
 
 
@@ -62,7 +72,7 @@ public class CA : MonoBehaviour
     {
         if (randomStart)
         {
-            for (int i = 0; i < screenWidth; i++)
+            for (int i = 0; i < cells.Length; i++)
             {
                 cells[i] = UnityEngine.Random.Range(0, 2);
             }
@@ -75,10 +85,10 @@ public class CA : MonoBehaviour
 
     void UpdateCells()
     {
-        for (int i = 0; i < screenHeight; i++)
+        for (int generation = 0; generation < maxGenerations; generation++)
         {
             Generate();
-            DrawNewGeneration();
+            DrawNewGeneration(generation);
         }
     }
 
@@ -107,17 +117,15 @@ public class CA : MonoBehaviour
         return 2;
     }
 
-    private void DrawNewGeneration()
+    private void DrawNewGeneration(int yPos)
     {
         for (int i = 0; i < cells.Length; i++)
         {
             if (cells[i] == 1)
             {
-                Instantiate(image, new Vector2(i, -generation), Quaternion.identity);
-                
+                Instantiate(image, new Vector2(i * pixelDistance, -yPos * pixelDistance), Quaternion.identity, parent);
             }
         }
-        generation++;
     }
 }
 
