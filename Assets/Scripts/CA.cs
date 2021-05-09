@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CA : MonoBehaviour
 {
-    public Sprite image;
+    
     Camera _camera;
     int[] cells;
     int[] nextgen;
@@ -14,12 +14,13 @@ public class CA : MonoBehaviour
     int generation = 0;
 
     //parameters
-    float repeatRate = 0.1f;
-    bool randomStart = false;
-    bool randomRuleset = false;
-    bool scrolling = false;
-    int resolution = 1;
-    int[] ruleset = new int[8];
+    public Sprite image;
+    //public float repeatRate = 0.1f;
+    public bool randomStart = true;
+    public bool randomRuleset = true;
+    //public bool scrolling = false;
+    public int resolution = 1;
+    public int[] ruleset;
     
     void Start()
     {
@@ -27,8 +28,8 @@ public class CA : MonoBehaviour
         screenWidth = Screen.width;
         screenHeight = Screen.height;
         _camera.transform.position = new Vector2(screenWidth / 2, -screenHeight / 2);
-        int[] cells = new int[screenWidth / resolution];
-        int[] nextgen = new int[screenWidth / resolution];
+        cells = new int[screenWidth / resolution];
+        nextgen = new int[screenWidth / resolution];
         SetRules();
         SetFirstGeneration();
         UpdateCells();
@@ -52,7 +53,7 @@ public class CA : MonoBehaviour
         }
         else
         {
-            int[] ruleset = { 0, 0, 0, 1, 0, 0, 1, 0 }; //18
+            //ruleset = { 0, 0, 0, 1, 0, 0, 1, 0 }; //18
         }
 
 
@@ -118,7 +119,7 @@ public class CA : MonoBehaviour
         {
             if (cells[i] == 1)
             {
-                Instantiate(image, new Vector2(i, -generation), Quaternion.identity);
+                Instantiate<Sprite>(image, new Vector2(i, -generation), Quaternion.identity);
             }
         }
         generation++;
