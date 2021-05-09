@@ -33,7 +33,8 @@ public class CA : MonoBehaviour
         screenHeight = Screen.height;
         arraySize = screenWidth / resolution;
 
-        _camera.transform.position = new Vector2(arraySize / 2 * pixelDistance, -screenHeight / 2);
+        _camera.transform.position = new Vector2(arraySize / 2 * pixelDistance, -maxGenerations / 2 * pixelDistance);
+        _camera.orthographicSize = maxGenerations / 2 * pixelDistance;
 
         ruleset = new int[8];
         cells = new int[arraySize];
