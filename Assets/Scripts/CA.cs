@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CA : MonoBehaviour
-{
-    
+{   
     Camera _camera;
     int[] cells;
     int[] nextgen;
@@ -14,12 +13,12 @@ public class CA : MonoBehaviour
     int generation = 0;
 
     //parameters
-    public Sprite image;
+    public GameObject image;
     //public float repeatRate = 0.1f;
     public bool randomStart = true;
     public bool randomRuleset = true;
     //public bool scrolling = false;
-    public int resolution = 1;
+    //public int resolution;
     public int[] ruleset;
     
     void Start()
@@ -28,8 +27,8 @@ public class CA : MonoBehaviour
         screenWidth = Screen.width;
         screenHeight = Screen.height;
         _camera.transform.position = new Vector2(screenWidth / 2, -screenHeight / 2);
-        cells = new int[screenWidth / resolution];
-        nextgen = new int[screenWidth / resolution];
+        cells = new int[screenWidth];
+        nextgen = new int[screenWidth];
         SetRules();
         SetFirstGeneration();
         UpdateCells();
@@ -70,10 +69,6 @@ public class CA : MonoBehaviour
         }
         else
         {
-            for (int i = 0; i < screenWidth; i++)
-            {
-                cells[i] = 0;
-            }
             cells[cells.Length / 2] = 1;
         }
     }
@@ -86,7 +81,6 @@ public class CA : MonoBehaviour
             DrawNewGeneration();
         }
     }
-
 
     private void Generate()
     {
@@ -119,7 +113,8 @@ public class CA : MonoBehaviour
         {
             if (cells[i] == 1)
             {
-                Instantiate<Sprite>(image, new Vector2(i, -generation), Quaternion.identity);
+                Instantiate(image, new Vector2(i, -generation), Quaternion.identity);
+                
             }
         }
         generation++;
