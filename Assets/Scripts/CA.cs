@@ -1,45 +1,51 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UI;
+using System;
 
 public class CA : MonoBehaviour
 {   
-    Camera _camera;
-    int[] cells;
+    //TODO botoes delegates etc
+
+    public static int[] cells;
+    public static int[] ruleset;
+
     int[] nextgen;
     int screenWidth;
     int screenHeight;
     int arraySize;
-    public GameObject image;
+    
     GameObject parent = null;
-    float pixelDistance = 0.01f;
+    GameObject ui;
 
     //parameters
     public bool randomStart = true;
     public bool randomRuleset = true;
     //public bool scrolling = false;
-    
+    //public float repeatRate = 0.1f;
+
+    private float pixelDistance = 0.01f;
+    private int rulesetSize = 8;
     public int maxGenerations = 100;
     public int resolution = 10;
-    //public float repeatRate = 0.1f;
-    public int[] ruleset;
-
+    
+    
+    [SerializeField] private GameObject image;
+    [SerializeField] private BinaryConverter converter;
+    [SerializeField] private InputField ruleInput;
+    [SerializeField] private Text ruleOutput;
+    [SerializeField] private Text startOutput;
 
     private void Start()
     {
-        _camera = Camera.main;
+        ui = GameObject.Find("Main Panel");   
+        
         screenWidth = Screen.width;
         screenHeight = Screen.height;
         arraySize = maxGenerations;
 
+        Camera _camera = Camera.main;
         _camera.transform.position = new Vector2(arraySize / 2 * pixelDistance, -maxGenerations / 2 * pixelDistance);
-        //fits camera vertically
-        _camera.orthographicSize = maxGenerations * pixelDistance * 0.5f;
-        //fits camera horizontally https://www.youtube.com/watch?v=3xXlnSetHPM doesnt work
-        //_camera.orthographicSize = arraySize * pixelDistance  * screenHeight / screenWidth * 0.5f;
-
-
+        _camera.orthographicSize = maxGenerations * pixelDistance * 0.5f; //fits camera vertically
 
     }
 
@@ -53,7 +59,7 @@ public class CA : MonoBehaviour
 
     private void Reset()
     {
-        ruleset = new int[8];
+        ruleset = new int[rulesetSize];
         cells = new int[arraySize];
         nextgen = new int[arraySize];
 
@@ -73,12 +79,12 @@ public class CA : MonoBehaviour
         }
         else
         {
-            //draw from UI
-            //convert
+            int rulesetText = 0;
+            if (rulesetText > 255) ruleInput.text = "255";
+            rulesetText = int.Parse(ruleInput.text);
+            ruleset = converter.RulesetDecimaltoBinary(rulesetText);
         }
-
-        //convert to decimal
-        //draw on ui
+        ruleOutput.text = "Rule " + converter.RulesetBinarytoDecimal();
     }
 
     private void SetFirstGeneration()
@@ -89,10 +95,12 @@ public class CA : MonoBehaviour
             {
                 cells[i] = UnityEngine.Random.Range(0, 2);
             }
+            startOutput.text = "Random Start";
         }
         else
         {
             cells[cells.Length / 2] = 1;
+            startOutput.text = "Normal Start";
         }
     }
 
@@ -127,7 +135,7 @@ public class CA : MonoBehaviour
         if (a == 0 && b == 1 && c == 0) return ruleset[2];
         if (a == 0 && b == 0 && c == 1) return ruleset[1];
         if (a == 0 && b == 0 && c == 0) return ruleset[0];
-        return 2;
+        return 999;
     }
 
     private void DrawNewGeneration(int yPos)
@@ -137,6 +145,25 @@ public class CA : MonoBehaviour
             if (cells[i] == 1)
             {
                 Instantiate(image, new Vector2(i * pixelDistance, -yPos * pixelDistance), Quaternion.identity, parent.transform);
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown("space") || Input.GetKeyDown("enter"))
+        {
+            Run();
+        }
+        if (Input.GetKeyDown("tab"))
+        {
+            if (ui.activeSelf)
+            {
+                ui.SetActive(false);
+            }
+            else
+            {
+                ui.SetActive(true);
             }
         }
     }
