@@ -17,6 +17,7 @@ public class CA : MonoBehaviour
     private int[] nextgen;
     private int arraySize;
 
+    [Space]
     [Header("Parameters")]
     public static bool randomRuleset;
     public static bool randomStart;
