@@ -2,45 +2,42 @@
 using UnityEngine.UI;
 using System;
 
+[DisallowMultipleComponent]
 public class CA : MonoBehaviour
-{   
-    //TODO botoes delegates etc
-
-    public static int[] cells;
-    public static int[] ruleset;
-
-    int[] nextgen;
-    int screenWidth;
-    int screenHeight;
-    int arraySize;
-    
-    GameObject parent = null;
-    GameObject ui;
-
-    //parameters
-    public bool randomStart = true;
-    public bool randomRuleset = true;
-    //public bool scrolling = false;
-    //public float repeatRate = 0.1f;
-
-    private float pixelDistance = 0.01f;
-    private int rulesetSize = 8;
-    public int maxGenerations = 100;
-    public int resolution = 10;
-    
-    
+{
     [SerializeField] private GameObject image;
     [SerializeField] private BinaryConverter converter;
+    [SerializeField] private InputManager inputManager;
     [SerializeField] private InputField ruleInput;
     [SerializeField] private Text ruleOutput;
     [SerializeField] private Text startOutput;
+
+    public static int[] cells;
+    public static int[] ruleset;
+    private int[] nextgen;
+    private int arraySize;
+
+    [Header("Parameters")]
+    public static bool randomRuleset;
+    public static bool randomStart;
+    public static bool scrolling;
+    
+    public int maxGenerations = 100;
+    public int resolution = 10;
+    //public float repeatRate = 0.1f;
+    
+    private float pixelDistance = 0.01f;
+    private int rulesetSize = 8;
+
+    private GameObject parent = null;
+    private GameObject ui;
 
     private void Start()
     {
         ui = GameObject.Find("Main Panel");   
         
-        screenWidth = Screen.width;
-        screenHeight = Screen.height;
+        int screenWidth = Screen.width;
+        int screenHeight = Screen.height;
         arraySize = maxGenerations;
 
         Camera _camera = Camera.main;
@@ -52,6 +49,7 @@ public class CA : MonoBehaviour
     public void Run()
     {
         Reset();
+        inputManager.CheckUI();
         SetRules();
         SetFirstGeneration();
         UpdateCells();
@@ -79,9 +77,12 @@ public class CA : MonoBehaviour
         }
         else
         {
-            int rulesetText = 0;
-            if (rulesetText > 255) ruleInput.text = "255";
-            rulesetText = int.Parse(ruleInput.text);
+            int rulesetText = int.Parse(ruleInput.text);
+            if (rulesetText > 255 || ruleInput.text == null)
+            {
+                ruleInput.text = "0";
+                rulesetText = 0;
+            }
             ruleset = converter.RulesetDecimaltoBinary(rulesetText);
         }
         ruleOutput.text = "Rule " + converter.RulesetBinarytoDecimal();
@@ -155,6 +156,7 @@ public class CA : MonoBehaviour
         {
             Run();
         }
+        
         if (Input.GetKeyDown("tab"))
         {
             if (ui.activeSelf)
@@ -166,6 +168,37 @@ public class CA : MonoBehaviour
                 ui.SetActive(true);
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            ArrowRun("up");
+        }
+
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            ArrowRun("down");
+        }
+    }
+
+    public void ArrowRun(string type)
+    {
+        if (randomRuleset) return;
+
+        Reset();
+        inputManager.CheckUI();
+
+        int rulesetText = int.Parse(ruleInput.text);
+        if (rulesetText > 255 || rulesetText < 0) return;
+
+        if (type == "up") rulesetText++;
+        if (type == "down") rulesetText--;
+
+        ruleset = converter.RulesetDecimaltoBinary(rulesetText);
+        ruleInput.text = converter.RulesetBinarytoDecimal().ToString();
+        ruleOutput.text = "Rule " + converter.RulesetBinarytoDecimal();
+
+        SetFirstGeneration();
+        UpdateCells();
     }
 }
 
