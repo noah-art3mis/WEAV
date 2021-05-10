@@ -8,7 +8,7 @@ public class CA : MonoBehaviour
     [SerializeField] private GameObject image;
     [SerializeField] private BinaryConverter converter;
     [SerializeField] private InputManager inputManager;
-    [SerializeField] private InputField ruleInput;
+    [SerializeField] public InputField ruleInput;
     [SerializeField] private Text ruleOutput;
     [SerializeField] private Text startOutput;
 
@@ -18,9 +18,9 @@ public class CA : MonoBehaviour
     private int arraySize;
 
     [Header("Parameters")]
-    public static bool randomRuleset;
-    public static bool randomStart;
-    public static bool scrolling;
+    public bool randomRuleset;
+    public bool randomStart;
+    public bool scrolling;
     
     public int maxGenerations = 100;
     public int resolution = 10;
@@ -77,8 +77,17 @@ public class CA : MonoBehaviour
         }
         else
         {
-            int rulesetText = int.Parse(ruleInput.text);
-            if (rulesetText > 255 || ruleInput.text == null)
+            int rulesetText;
+            if (ruleInput.text != "")
+            {
+                rulesetText = int.Parse(ruleInput.text);
+            }
+            else
+            {
+                ruleInput.text = "0";
+                rulesetText = 0;
+            }
+            if (rulesetText > 255 || rulesetText < 0)
             {
                 ruleInput.text = "0";
                 rulesetText = 0;

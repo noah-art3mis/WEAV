@@ -2348,14 +2348,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbd5d2777627b104bbf2610742782b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxGenerations: 100
-  resolution: 10
   image: {fileID: 5414303267667818715, guid: f25f6a7c69566cb4e8b1075f847bf5f1, type: 3}
   converter: {fileID: 869969523}
   inputManager: {fileID: 869969522}
   ruleInput: {fileID: 1213128057}
   ruleOutput: {fileID: 1727979398}
   startOutput: {fileID: 1521094437}
+  randomRuleset: 0
+  randomStart: 0
+  scrolling: 0
+  maxGenerations: 100
+  resolution: 10
 --- !u!4 &869969521
 Transform:
   m_ObjectHideFlags: 0
@@ -2385,6 +2388,7 @@ MonoBehaviour:
   randomRulesetToggle: {fileID: 1229386000}
   startDropdown: {fileID: 1819017383}
   modeDropdown: {fileID: 440507282}
+  runButton: {fileID: 0}
 --- !u!114 &869969523
 MonoBehaviour:
   m_ObjectHideFlags: 0
