@@ -70,7 +70,7 @@ public class SettingsManager : MonoBehaviour
                 return ruleset;
             }
 
-            if (parameter == "up")
+            if (parameter == "up") ///
             {
                 rulesetDecimal++;
                 inputField.text = rulesetDecimal.ToString();
