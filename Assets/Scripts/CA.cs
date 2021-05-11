@@ -161,7 +161,7 @@ public class CA : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown("space") || Input.GetKeyDown("enter"))
+        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
         {
             Run();
         }
