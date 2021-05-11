@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public class InputManager : MonoBehaviour
+public class SettingsManager : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private Toggle randomRulesetToggle;

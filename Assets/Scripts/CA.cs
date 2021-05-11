@@ -1,30 +1,30 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-[DisallowMultipleComponent]
 public class CA : MonoBehaviour
 {
     [SerializeField] private GameObject image;
     [SerializeField] private BinaryConverter converter;
-    [SerializeField] private InputManager inputManager;
+    [SerializeField] private SettingsManager inputManager;
     [SerializeField] public InputField ruleInput;
     [SerializeField] private Text ruleOutput;
     [SerializeField] private Text startOutput;
+
+    //https://mathworld.wolfram.com/ElementaryCellularAutomaton.html
+
 
     public static int[] cells;
     public static int[] ruleset;
     private int[] nextgen;
     private int arraySize;
 
-    [Header("Parameters")]
+    [Header("Settings")]
     public bool randomRuleset;
     public bool randomStart;
     public bool scrolling;
     
     public int maxGenerations = 100;
     public int resolution = 10;
-    //public float repeatRate = 0.1f;
     
     private float pixelDistance = 0.01f;
     private int rulesetSize = 8;
@@ -110,7 +110,7 @@ public class CA : MonoBehaviour
         else
         {
             cells[cells.Length / 2] = 1;
-            startOutput.text = "Normal Start";
+            startOutput.text = "Single Cell Start";
         }
     }
 
