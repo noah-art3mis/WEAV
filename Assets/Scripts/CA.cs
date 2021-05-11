@@ -3,39 +3,37 @@ using UnityEngine.UI;
 
 public class CA : MonoBehaviour
 {
+    //https://mathworld.wolfram.com/ElementaryCellularAutomaton.html
+
+    [Header("Dependencies")]
     [SerializeField] private GameObject image;
-    [SerializeField] private BinaryConverter converter;
-    [SerializeField] private SettingsManager inputManager;
     [SerializeField] public InputField ruleInput;
     [SerializeField] private Text ruleOutput;
     [SerializeField] private Text startOutput;
+    [SerializeField] private GameObject ui;
 
-    //https://mathworld.wolfram.com/ElementaryCellularAutomaton.html
-
+    private SettingsManager settings;
+    private BinaryConverter converter;
+    private GameObject cellsParent;
 
     public static int[] cells;
     public static int[] ruleset;
     private int[] nextgen;
-    private int arraySize;
+
 
     [Header("Settings")]
-    public bool randomRuleset;
-    public bool randomStart;
-    public bool scrolling;
-    
     public int maxGenerations = 100;
+    public int arraySize = 100; 
     public int resolution = 10;
     
     private float pixelDistance = 0.01f;
     private int rulesetSize = 8;
 
-    private GameObject parent = null;
-    private GameObject ui;
-
     private void Start()
     {
-        ui = GameObject.Find("Main Panel");   
-        
+        settings = GetComponent<SettingsManager>();
+        converter = GetComponent<BinaryConverter>();
+
         int screenWidth = Screen.width;
         int screenHeight = Screen.height;
         arraySize = maxGenerations;
@@ -43,75 +41,25 @@ public class CA : MonoBehaviour
         Camera _camera = Camera.main;
         _camera.transform.position = new Vector2(arraySize / 2 * pixelDistance, -maxGenerations / 2 * pixelDistance);
         _camera.orthographicSize = maxGenerations * pixelDistance * 0.5f; //fits camera vertically
-
     }
 
-    public void Run()
+    public void Run(string parameter)
     {
         Reset();
-        inputManager.CheckUI();
-        SetRules();
-        SetFirstGeneration();
+        ruleset = settings.ComputeSettings(parameter);
+        settings.SetFirstGeneration();
         UpdateCells();
     }
 
-    private void Reset()
+    public void Reset()
     {
         ruleset = new int[rulesetSize];
         cells = new int[arraySize];
         nextgen = new int[arraySize];
 
         Destroy(GameObject.Find("Cell Container"));
-        parent = new GameObject("Cell Container");
-        parent.transform.parent = transform;
-    }
-
-    private void SetRules()
-    {
-        if (randomRuleset) 
-        {
-            for (int i = 0; i < ruleset.Length; i++)
-            {
-                ruleset[i] = UnityEngine.Random.Range(0, 2);
-            }
-        }
-        else
-        {
-            int rulesetText;
-            if (ruleInput.text != "")
-            {
-                rulesetText = int.Parse(ruleInput.text);
-            }
-            else
-            {
-                ruleInput.text = "0";
-                rulesetText = 0;
-            }
-            if (rulesetText > 255 || rulesetText < 0)
-            {
-                ruleInput.text = "0";
-                rulesetText = 0;
-            }
-            ruleset = converter.RulesetDecimaltoBinary(rulesetText);
-        }
-        ruleOutput.text = "Rule " + converter.RulesetBinarytoDecimal();
-    }
-
-    private void SetFirstGeneration()
-    {
-        if (randomStart)
-        {
-            for (int i = 0; i < cells.Length; i++)
-            {
-                cells[i] = UnityEngine.Random.Range(0, 2);
-            }
-            startOutput.text = "Random Start";
-        }
-        else
-        {
-            cells[cells.Length / 2] = 1;
-            startOutput.text = "Single Cell Start";
-        }
+        cellsParent = new GameObject("Cell Container");
+        cellsParent.transform.parent = transform;
     }
 
     private void UpdateCells()
@@ -154,7 +102,7 @@ public class CA : MonoBehaviour
         {
             if (cells[i] == 1)
             {
-                Instantiate(image, new Vector2(i * pixelDistance, -yPos * pixelDistance), Quaternion.identity, parent.transform);
+                Instantiate(image, new Vector2(i * pixelDistance, -yPos * pixelDistance), Quaternion.identity, cellsParent.transform);
             }
         }
     }
@@ -163,7 +111,7 @@ public class CA : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
         {
-            Run();
+            Run("");
         }
         
         if (Input.GetKeyDown("tab"))
@@ -180,34 +128,13 @@ public class CA : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            ArrowRun("up");
+            Run("up");
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            ArrowRun("down");
+            Run("down");
         }
-    }
-
-    public void ArrowRun(string type)
-    {
-        if (randomRuleset) return;
-
-        Reset();
-        inputManager.CheckUI();
-
-        int rulesetText = int.Parse(ruleInput.text);
-        if (rulesetText > 255 || rulesetText < 0) return;
-
-        if (type == "up") rulesetText++;
-        if (type == "down") rulesetText--;
-
-        ruleset = converter.RulesetDecimaltoBinary(rulesetText);
-        ruleInput.text = converter.RulesetBinarytoDecimal().ToString();
-        ruleOutput.text = "Rule " + converter.RulesetBinarytoDecimal();
-
-        SetFirstGeneration();
-        UpdateCells();
     }
 }
 
