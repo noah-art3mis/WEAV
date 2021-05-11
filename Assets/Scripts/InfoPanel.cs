@@ -5,18 +5,28 @@ public class InfoPanel : MonoBehaviour
 {
     [SerializeField] private Text ruleText;
     [SerializeField] private Text startText;
+    [SerializeField] private BinaryConverter converter; //assign
     
+    
+    //void Start()
+    //{
+    //    gameObject.SetActive(false);
+    //}
 
-    void Start()
+    private void OnEnable()
     {
-        gameObject.SetActive(false);
+        CA.settingsDone += RunInfo;
+
+    }
+    private void OnDisable()
+    {
+        CA.settingsDone -= RunInfo;
+
     }
 
-    private void RunInfo()
+    private void RunInfo(int[] ruleset, string startInfo)
     {
-        ruleText.text = "Rule ";//outro event converter.RulesetBinarytoDecimal(); 
-        startText.text = ""; //listen to event
+        ruleText.text = "Rule " + converter.RulesetBinarytoDecimal(ruleset);
+        startText.text = startInfo;
     }
-    
-
 }

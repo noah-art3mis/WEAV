@@ -20,6 +20,8 @@ public class SettingsManager : MonoBehaviour
     public bool randomStart;
     public bool scrolling;
 
+
+
     private void Start()
     {
         ca = GetComponent<CA>();
@@ -68,8 +70,17 @@ public class SettingsManager : MonoBehaviour
                 return ruleset;
             }
 
-            if (parameter == "up") rulesetDecimal++;
-            if (parameter == "down") rulesetDecimal--;
+            if (parameter == "up")
+            {
+                rulesetDecimal++;
+                inputField.text = rulesetDecimal.ToString();
+            }
+            if (parameter == "down")
+            {
+                rulesetDecimal--;
+                inputField.text = rulesetDecimal.ToString();
+            }
+
             ruleset = converter.RulesetDecimaltoBinary(rulesetDecimal);
         }
         return ruleset;

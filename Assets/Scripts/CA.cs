@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class CA : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class CA : MonoBehaviour
     public static int[] ruleset;
     private int[] nextgen;
 
+    public static event Action<int[], string> settingsDone;
 
     [Header("Settings")]
     public int maxGenerations = 100;
@@ -47,7 +49,8 @@ public class CA : MonoBehaviour
     {
         Reset();
         ruleset = settings.ComputeSettings(parameter);
-        settings.SetFirstGeneration();
+        string startInfo = settings.SetFirstGeneration();
+        settingsDone?.Invoke(ruleset, startInfo);
         UpdateCells();
     }
 

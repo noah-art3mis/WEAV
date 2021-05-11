@@ -5,12 +5,12 @@ using UnityEngine.UI;
 public class BinaryConverter : MonoBehaviour
 {
 
-    public int RulesetBinarytoDecimal()
+    public int RulesetBinarytoDecimal(int[] ruleset)
     {
         int rulesetDecimal = 0;
         for (int i = 0, j = 128; i < 8; i++)
         {
-            rulesetDecimal = rulesetDecimal + (CA.ruleset[i] * j);
+            rulesetDecimal = rulesetDecimal + (ruleset[i] * j);
             j /= 2;
         }
         return rulesetDecimal;
