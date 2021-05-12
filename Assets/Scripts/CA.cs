@@ -16,6 +16,7 @@ public class CA : MonoBehaviour
     private SettingsManager settings;
     private BinaryConverter converter;
     private GameObject cellsParent;
+    private Camera _camera;
 
     public static int[] cells;
     public static int[] ruleset;
@@ -40,18 +41,23 @@ public class CA : MonoBehaviour
         int screenHeight = Screen.height;
         arraySize = maxGenerations;
 
-        Camera _camera = Camera.main;
-        _camera.transform.position = new Vector2(arraySize / 2 * pixelDistance, -maxGenerations / 2 * pixelDistance);
-        _camera.orthographicSize = maxGenerations * pixelDistance * 0.5f; //fits camera vertically
+        _camera = Camera.main;
     }
 
     public void Run(string parameter)
     {
+        ResetCamera();
         Reset();
         ruleset = settings.ComputeSettings(parameter);
         string startInfo = settings.SetFirstGeneration();
         settingsDone?.Invoke(ruleset, startInfo);
         UpdateCells();
+    }
+
+    private void ResetCamera()
+    {
+        _camera.transform.position = new Vector2(arraySize / 2 * pixelDistance, -maxGenerations / 2 * pixelDistance + pixelDistance);
+        _camera.orthographicSize = maxGenerations * pixelDistance * 0.5f; //fits camera vertically
     }
 
     public void Reset()
@@ -69,8 +75,8 @@ public class CA : MonoBehaviour
     {
         for (int generation = 0; generation < maxGenerations; generation++)
         {
+            DrawNewGeneration(generation); 
             Generate();
-            DrawNewGeneration(generation);
         }
     }
 
@@ -88,14 +94,14 @@ public class CA : MonoBehaviour
 
     private int ApplyRuleset(int a, int b, int c)
     {
-        if (a == 1 && b == 1 && c == 1) return ruleset[7];
-        if (a == 1 && b == 1 && c == 0) return ruleset[6];
-        if (a == 1 && b == 0 && c == 1) return ruleset[5];
-        if (a == 1 && b == 0 && c == 0) return ruleset[4];
-        if (a == 0 && b == 1 && c == 1) return ruleset[3];
-        if (a == 0 && b == 1 && c == 0) return ruleset[2];
-        if (a == 0 && b == 0 && c == 1) return ruleset[1];
-        if (a == 0 && b == 0 && c == 0) return ruleset[0];
+        if (a == 1 && b == 1 && c == 1) return ruleset[0];
+        if (a == 1 && b == 1 && c == 0) return ruleset[1];
+        if (a == 1 && b == 0 && c == 1) return ruleset[2];
+        if (a == 1 && b == 0 && c == 0) return ruleset[3];
+        if (a == 0 && b == 1 && c == 1) return ruleset[4];
+        if (a == 0 && b == 1 && c == 0) return ruleset[5];
+        if (a == 0 && b == 0 && c == 1) return ruleset[6];
+        if (a == 0 && b == 0 && c == 0) return ruleset[7];
         return 999;
     }
 
@@ -129,15 +135,19 @@ public class CA : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (!settings.randomRuleset)
         {
-            Run("up");
-        }
+            if (Input.GetKeyDown(KeyCode.UpArrow)) 
+            {
+                Run("up");
+            }
 
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            Run("down");
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                Run("down");
+            }
         }
+        
     }
 }
 

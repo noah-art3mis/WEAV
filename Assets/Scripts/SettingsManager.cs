@@ -88,19 +88,17 @@ public class SettingsManager : MonoBehaviour
 
     public string SetFirstGeneration()
     {
-        int[] cells = new int[ca.arraySize];
-
         if (randomStart)
         {
-            for (int i = 0; i < cells.Length; i++)
+            for (int i = 0; i < CA.cells.Length; i++)
             {
-                cells[i] = UnityEngine.Random.Range(0, 2);
+                CA.cells[i] = UnityEngine.Random.Range(0, 2);
             }
             return "Random Start";
         }
         else
         {
-            cells[cells.Length / 2] = 1;
+            CA.cells[CA.cells.Length / 2] = 1;
             return "Single Cell Start";
         }
     }

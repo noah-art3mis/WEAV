@@ -5,14 +5,8 @@ public class InfoPanel : MonoBehaviour
 {
     [SerializeField] private Text ruleText;
     [SerializeField] private Text startText;
-    [SerializeField] private BinaryConverter converter; //assign
+    [SerializeField] private BinaryConverter converter;
     
-    
-    //void Start()
-    //{
-    //    gameObject.SetActive(false);
-    //}
-
     private void OnEnable()
     {
         CA.settingsDone += RunInfo;

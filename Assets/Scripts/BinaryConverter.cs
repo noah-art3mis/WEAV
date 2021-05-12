@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 [DisallowMultipleComponent]
 public class BinaryConverter : MonoBehaviour
@@ -8,10 +7,10 @@ public class BinaryConverter : MonoBehaviour
     public int RulesetBinarytoDecimal(int[] ruleset)
     {
         int rulesetDecimal = 0;
-        for (int i = 0, j = 128; i < 8; i++)
+        for (int i = 8, j = 1; i > 0; i--)
         {
-            rulesetDecimal = rulesetDecimal + (ruleset[i] * j);
-            j /= 2;
+            rulesetDecimal = rulesetDecimal + (ruleset[i - 1] * j);
+            j *= 2;
         }
         return rulesetDecimal;
     }
@@ -20,21 +19,18 @@ public class BinaryConverter : MonoBehaviour
     {
         int[] ruleset = new int[CA.ruleset.Length];
         int remainder;
-        int i = 0;
 
         if (decimalNumber > 255)
         {
             Debug.Log("There are only 256 rules");
             return ruleset;
         }
-        while (decimalNumber > 0)
+        for (int i = 8; i > 0; i--)
         {        
             remainder = decimalNumber % 2;
             decimalNumber /= 2;
-            ruleset[i] = remainder;
-            i++;
+            ruleset[i - 1] = remainder;
         }
-        System.Array.Reverse(ruleset);
         return ruleset;
     }
 
