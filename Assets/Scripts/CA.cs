@@ -14,59 +14,66 @@ public class CA : MonoBehaviour
     [SerializeField] private GameObject ui;
 
     private SettingsManager settings;
-    private BinaryConverter converter;
     private GameObject cellsParent;
     private Camera _camera;
 
-    public static int[] cells;
-    public static int[] ruleset;
-    private int[] nextgen;
-
     public static event Action<int[], string> settingsDone;
+    public static string startInfo;
 
     [Header("Settings")]
-    public int maxGenerations = 100;
-    public int arraySize = 100; 
-    public int resolution = 10;
-    
+    public static int maxGenerations = 100;
+    public static int arraySize = 100;
+
+    public static int[] cells = new int[arraySize];
+    public static int[] ruleset = new int[8];
+
     private float pixelDistance = 0.01f;
-    private int rulesetSize = 8;
 
     private void Start()
     {
         settings = GetComponent<SettingsManager>();
-        converter = GetComponent<BinaryConverter>();
-
-        int screenWidth = Screen.width;
-        int screenHeight = Screen.height;
-        arraySize = maxGenerations;
 
         _camera = Camera.main;
+
+        arraySize = maxGenerations; //now is a square. maybe rectangle in future
     }
 
-    public void Run(string parameter)
+    public void Run(string upOrDown)
     {
         ResetCamera();
         Reset();
-        ruleset = settings.ComputeSettings(parameter);
-        string startInfo = settings.SetFirstGeneration();
+
+        CreateSprites();
+
+        settings.ComputeSettings();
+        ruleset = settings.GetRuleset(upOrDown);
+        cells = settings.SetFirstGeneration();
+
         settingsDone?.Invoke(ruleset, startInfo);
+
         UpdateCells();
+    }
+
+    private void CreateSprites()
+    {
+        throw new NotImplementedException();
     }
 
     private void ResetCamera()
     {
-        _camera.transform.position = new Vector2(arraySize / 2 * pixelDistance, -maxGenerations / 2 * pixelDistance + pixelDistance);
+        Vector2 cameraPosition = Vector2.zero;
+        cameraPosition.x = arraySize / 2 * pixelDistance;
+        cameraPosition.y = maxGenerations / 2 * pixelDistance - pixelDistance;
+        _camera.transform.position = new Vector2(cameraPosition.x, -cameraPosition.y);
         _camera.orthographicSize = maxGenerations * pixelDistance * 0.5f; //fits camera vertically
     }
 
     public void Reset()
     {
-        ruleset = new int[rulesetSize];
-        cells = new int[arraySize];
-        nextgen = new int[arraySize];
+        Array.Clear(ruleset, 0, ruleset.Length);
+        Array.Clear(cells, 0, cells.Length);
 
-        Destroy(GameObject.Find("Cell Container"));
+        Destroy(GameObject.Find("Cell Container")); //memory leak
         cellsParent = new GameObject("Cell Container");
         cellsParent.transform.parent = transform;
     }
@@ -75,14 +82,15 @@ public class CA : MonoBehaviour
     {
         for (int generation = 0; generation < maxGenerations; generation++)
         {
-            DrawNewGeneration(generation); 
             Generate();
+            DrawNewGeneration(generation); 
         }
     }
 
+    private int[] nextgen = new int[arraySize];
     private void Generate()
     {
-        for (int i = 1; i < cells.Length - 1; i++) // ignores borders
+        for (int i = 1; i < arraySize - 1; i++) // ignores borders
         {
             int left = cells[i - 1];
             int me = cells[i];
@@ -105,13 +113,16 @@ public class CA : MonoBehaviour
         return 999;
     }
 
+    Vector2 cellPosition = Vector2.zero;
     private void DrawNewGeneration(int yPos)
     {
-        for (int i = 0; i < cells.Length; i++)
+        for (int i = 0; i < arraySize; i++)
         {
             if (cells[i] == 1)
             {
-                Instantiate(image, new Vector2(i * pixelDistance, -yPos * pixelDistance), Quaternion.identity, cellsParent.transform);
+                cellPosition.x = i * pixelDistance;
+                cellPosition.y = -yPos * pixelDistance;
+                Instantiate(image, cellPosition, Quaternion.identity, cellsParent.transform); //memory
             }
         }
     }
@@ -123,31 +134,21 @@ public class CA : MonoBehaviour
             Run("");
         }
         
-        if (Input.GetKeyDown("tab"))
-        {
-            if (ui.activeSelf)
-            {
-                ui.SetActive(false);
-            }
-            else
-            {
-                ui.SetActive(true);
-            }
-        }
-
         if (!settings.randomRuleset)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow)) 
-            {
                 Run("up");
-            }
-
             if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
                 Run("down");
-            }
         }
-        
+
+        if (Input.GetKeyDown("tab"))
+        {
+            if (ui.activeSelf)
+                ui.SetActive(false);
+            else
+                ui.SetActive(true);
+        }
     }
 }
 

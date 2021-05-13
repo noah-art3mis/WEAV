@@ -1,6 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿
 using UnityEngine.UI;
+using UnityEngine;
 
 public class SettingsManager : MonoBehaviour
 {
@@ -12,27 +12,24 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private InputField inputField;
     [SerializeField] private GameObject errorPanel;
     [SerializeField] private Text errorPanelText;
+
     private CA ca;
-    private BinaryConverter converter;
 
     [Header("Settings")]
     public bool randomRuleset;
     public bool randomStart;
     public bool scrolling;
 
-
-
     private void Start()
     {
         ca = GetComponent<CA>();
-        converter = GetComponent<BinaryConverter>();
 
         randomRuleset = false;
         randomStart = false;
         scrolling = false;
     }
 
-    public int[] ComputeSettings(string parameter)
+    public void ComputeSettings()
     {
         if (startDropdown.value == 0) randomStart = false;
         if (startDropdown.value == 1) randomStart = true;
@@ -40,18 +37,17 @@ public class SettingsManager : MonoBehaviour
         if (modeDropdown.value == 1) scrolling = true;
         if (randomRulesetToggle.isOn == true) randomRuleset = true;
         if (randomRulesetToggle.isOn == false) randomRuleset = false;
-        return GetRuleset(parameter);
     }
 
-    private int[] GetRuleset(string parameter)
+    public int[] GetRuleset(string parameter)
     {
-        int[] ruleset = new int[8];
+        int[] ruleset = new int[CA.ruleset.Length];
 
         if (randomRuleset)
         {
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < ruleset.Length; i++)
             {
-                ruleset[i] = UnityEngine.Random.Range(0, 2);
+                ruleset[i] = Random.Range(0, 2);
             }
         }
         else
@@ -81,25 +77,29 @@ public class SettingsManager : MonoBehaviour
                 inputField.text = rulesetDecimal.ToString();
             }
 
-            ruleset = converter.RulesetDecimaltoBinary(rulesetDecimal);
+            ruleset = BinaryConverter.RulesetDecimaltoBinary(rulesetDecimal);
         }
         return ruleset;
     }
 
-    public string SetFirstGeneration()
+    public int[] SetFirstGeneration()
     {
+        int[] firstGen = new int[CA.arraySize];
+
         if (randomStart)
         {
-            for (int i = 0; i < CA.cells.Length; i++)
+            for (int i = 0; i < firstGen.Length; i++)
             {
-                CA.cells[i] = UnityEngine.Random.Range(0, 2);
+                firstGen[i] = Random.Range(0, 2);
             }
-            return "Random Start";
+            CA.startInfo = "Random Start";
+            return firstGen;
         }
         else
         {
-            CA.cells[CA.cells.Length / 2] = 1;
-            return "Single Cell Start";
+            firstGen[firstGen.Length / 2] = 1;
+            CA.startInfo = "Single Cell Start";
+            return firstGen;
         }
     }
 

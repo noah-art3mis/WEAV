@@ -20,7 +20,7 @@ public class InfoPanel : MonoBehaviour
 
     private void RunInfo(int[] ruleset, string startInfo)
     {
-        ruleText.text = "Rule " + converter.RulesetBinarytoDecimal(ruleset);
+        ruleText.text = "Rule " + BinaryConverter.RulesetBinarytoDecimal(ruleset);
         startText.text = startInfo;
     }
 }
