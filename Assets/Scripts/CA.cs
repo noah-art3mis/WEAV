@@ -5,6 +5,8 @@ using System;
 public class CA : MonoBehaviour
 {
     //https://mathworld.wolfram.com/ElementaryCellularAutomaton.html
+    //https://plato.stanford.edu/entries/cellular-automata/supplement.html
+    //http://atlas.wolfram.com/01/01/rulelist.html
 
     [Header("Dependencies")]
     [SerializeField] private GameObject image;
@@ -14,44 +16,42 @@ public class CA : MonoBehaviour
     [SerializeField] private GameObject ui;
 
     private SettingsManager settings;
-    private BinaryConverter converter;
     private GameObject cellsParent;
     private Camera _camera;
+    private UpdateCells cellUpdater;
 
     public static int[] cells;
     public static int[] ruleset;
-    private int[] nextgen;
 
     public static event Action<int[], string> settingsDone;
 
     [Header("Settings")]
-    public int maxGenerations = 100;
-    public int arraySize = 100; 
-    public int resolution = 10;
-    
-    private float pixelDistance = 0.01f;
-    private int rulesetSize = 8;
+    public static int rulesetSize = 8;
 
     private void Start()
     {
         settings = GetComponent<SettingsManager>();
-        converter = GetComponent<BinaryConverter>();
+        cellUpdater = GetComponent<UpdateCells>();
 
         int screenWidth = Screen.width;
         int screenHeight = Screen.height;
         arraySize = maxGenerations;
 
         _camera = Camera.main;
+
+        Grid.Create();
     }
 
     public void Run(string parameter)
     {
         ResetCamera();
         Reset();
+
         ruleset = settings.ComputeSettings(parameter);
-        string startInfo = settings.SetFirstGeneration();
+        int[] firstGen = settings.SetFirstGeneration();
         settingsDone?.Invoke(ruleset, startInfo);
-        UpdateCells();
+        
+        cellUpdater.GenerateGrid(ruleset, cells);
     }
 
     private void ResetCamera()
@@ -62,58 +62,8 @@ public class CA : MonoBehaviour
 
     public void Reset()
     {
-        ruleset = new int[rulesetSize];
-        cells = new int[arraySize];
-        nextgen = new int[arraySize];
-
-        Destroy(GameObject.Find("Cell Container"));
-        cellsParent = new GameObject("Cell Container");
-        cellsParent.transform.parent = transform;
-    }
-
-    private void UpdateCells()
-    {
-        for (int generation = 0; generation < maxGenerations; generation++)
-        {
-            DrawNewGeneration(generation); 
-            Generate();
-        }
-    }
-
-    private void Generate()
-    {
-        for (int i = 1; i < cells.Length - 1; i++) // ignores borders
-        {
-            int left = cells[i - 1];
-            int me = cells[i];
-            int right = cells[i + 1];
-            nextgen[i] = ApplyRuleset(left, me, right);
-        }
-        cells = nextgen;
-    }
-
-    private int ApplyRuleset(int a, int b, int c)
-    {
-        if (a == 1 && b == 1 && c == 1) return ruleset[0];
-        if (a == 1 && b == 1 && c == 0) return ruleset[1];
-        if (a == 1 && b == 0 && c == 1) return ruleset[2];
-        if (a == 1 && b == 0 && c == 0) return ruleset[3];
-        if (a == 0 && b == 1 && c == 1) return ruleset[4];
-        if (a == 0 && b == 1 && c == 0) return ruleset[5];
-        if (a == 0 && b == 0 && c == 1) return ruleset[6];
-        if (a == 0 && b == 0 && c == 0) return ruleset[7];
-        return 999;
-    }
-
-    private void DrawNewGeneration(int yPos)
-    {
-        for (int i = 0; i < cells.Length; i++)
-        {
-            if (cells[i] == 1)
-            {
-                Instantiate(image, new Vector2(i * pixelDistance, -yPos * pixelDistance), Quaternion.identity, cellsParent.transform);
-            }
-        }
+        Array.Clear(ruleset, 0, ruleset.Length);
+        Array.Clear(cells, 0, cells.Length);
     }
 
     private void Update()

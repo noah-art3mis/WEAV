@@ -20,8 +20,6 @@ public class SettingsManager : MonoBehaviour
     public bool randomStart;
     public bool scrolling;
 
-
-
     private void Start()
     {
         ca = GetComponent<CA>();
@@ -86,20 +84,22 @@ public class SettingsManager : MonoBehaviour
         return ruleset;
     }
 
-    public string SetFirstGeneration()
+    public int[] SetFirstGeneration(int[][] grid)
     {
         if (randomStart)
         {
-            for (int i = 0; i < CA.cells.Length; i++)
+            for (int i = 1; i < Grid.maxX - 1; i++) //ignore border
             {
-                CA.cells[i] = UnityEngine.Random.Range(0, 2);
+                grid[0][i] = UnityEngine.Random.Range(0, 2);
             }
-            return "Random Start";
+            Broadcast("Random Start");
+            return grid[0];
         }
         else
         {
-            CA.cells[CA.cells.Length / 2] = 1;
-            return "Single Cell Start";
+            grid[0][grid.Length / 2] = 1;
+            Broadcast("Single Cell Start");
+            return grid[0];
         }
     }
 
