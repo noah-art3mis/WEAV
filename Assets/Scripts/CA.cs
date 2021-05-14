@@ -12,7 +12,6 @@ public class CA : MonoBehaviour
     [SerializeField] public InputField ruleInput;
     [SerializeField] private Text ruleOutput;
     [SerializeField] private Text startOutput;
-    [SerializeField] private GameObject ui;
     [SerializeField] private MyCamera myCamera;
 
     private SettingsManager settings;
@@ -140,30 +139,6 @@ public class CA : MonoBehaviour
                     usedSprites.Add(sprite);
                 }
             }
-        }
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.Return))
-        {
-            Run("");
-        }
-        
-        if (!settings.randomRuleset)
-        {
-            if (Input.GetKeyDown(KeyCode.UpArrow)) 
-                Run("up");
-            if (Input.GetKeyDown(KeyCode.DownArrow))
-                Run("down");
-        }
-
-        if (Input.GetKeyDown("tab"))
-        {
-            if (ui.activeSelf)
-                ui.SetActive(false);
-            else
-                ui.SetActive(true);
         }
     }
 }
