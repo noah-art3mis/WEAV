@@ -5,11 +5,12 @@ using UnityEngine;
 public class SettingsManager : MonoBehaviour
 {
     [Header("Dependencies")]
+    [SerializeField] private InputField inputFieldRuleset;
     [SerializeField] private Toggle randomRulesetToggle;
     [SerializeField] private Dropdown startDropdown;
     [SerializeField] private Dropdown modeDropdown;
+    [SerializeField] private InputField inputFieldSize;
     [SerializeField] private Button runButton;
-    [SerializeField] private InputField inputField;
     [SerializeField] private GameObject errorPanel;
     [SerializeField] private Text errorPanelText;
 
@@ -52,13 +53,13 @@ public class SettingsManager : MonoBehaviour
         }
         else
         {
-            if (inputField.text == "")
+            if (inputFieldRuleset.text == "")
             {
                 ShowError("Must input a number between 0 and 255");
                 return ruleset;
             }
 
-            int rulesetDecimal = int.Parse(inputField.text);
+            int rulesetDecimal = int.Parse(inputFieldRuleset.text);
 
             if (rulesetDecimal > 255 || rulesetDecimal < 0)
             {
@@ -69,12 +70,12 @@ public class SettingsManager : MonoBehaviour
             if (parameter == "up")
             {
                 rulesetDecimal++;
-                inputField.text = rulesetDecimal.ToString();
+                inputFieldRuleset.text = rulesetDecimal.ToString();
             }
             if (parameter == "down")
             {
                 rulesetDecimal--;
-                inputField.text = rulesetDecimal.ToString();
+                inputFieldRuleset.text = rulesetDecimal.ToString();
             }
 
             ruleset = BinaryConverter.RulesetDecimaltoBinary(rulesetDecimal);
@@ -82,9 +83,25 @@ public class SettingsManager : MonoBehaviour
         return ruleset;
     }
 
-    public int[] SetFirstGeneration()
+    public int GetSize()
     {
-        int[] firstGen = new int[CA.arraySize];
+        if (inputFieldSize.text == "")
+            inputFieldSize.text = "100";
+
+        int size = int.Parse(inputFieldSize.text);
+
+        //if (size > 300 || size < 30)
+        //{
+        //    ShowError("Size must be a number between 30 and 300");
+        //    return size;
+        //}
+
+        return size;
+    }
+
+    public int[] SetFirstGeneration(int arraySize)
+    {
+        int[] firstGen = new int[arraySize];
 
         if (randomStart)
         {

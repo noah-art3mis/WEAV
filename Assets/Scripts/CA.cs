@@ -20,21 +20,27 @@ public class CA : MonoBehaviour
     public static string startInfo;
 
     [Header("Settings")]
-    public static int maxGenerations = 100;
-    public static int arraySize = maxGenerations; //maybe change
+    public int arraySize;
+    public int maxGenerations;
 
-    public static int[] cells = new int[arraySize];
     public static int[] ruleset = new int[8];
+    private int[] cells;
+    private int[] nextgen;
 
     Queue<GameObject> sprites = new Queue<GameObject>();
     List<GameObject> usedSprites = new List<GameObject>();
 
-    public static float pixelDistance = 0.01f;
+    public static float pixelDistance;
 
     private void Start()
     {
         settings = GetComponent<SettingsManager>();
         myCamera = GetComponent<MyCamera>();
+        
+        arraySize = 100;
+        maxGenerations = arraySize;
+        cells = new int[arraySize];
+        nextgen = new int[arraySize];
 
         CreateSprites();
     }
@@ -45,17 +51,28 @@ public class CA : MonoBehaviour
         ResetGrid();
 
         settings.ComputeSettings();
+        ComputeSize(settings.GetSize());
         ruleset = settings.GetRuleset(upOrDown);
-        cells = settings.SetFirstGeneration();
+        cells = settings.SetFirstGeneration(arraySize);
 
         settingsDone?.Invoke(ruleset, startInfo);
 
         UpdateCells();
     }
 
-    Vector2 spriteStartPosition = new Vector2(arraySize / 2 * pixelDistance, maxGenerations / 2 * pixelDistance + 2 * pixelDistance);
+    private void ComputeSize(int arraySizeInput)
+    {
+        if (arraySizeInput == arraySize) return;
+
+        arraySize = arraySizeInput; 
+        cells = new int[arraySize];
+        nextgen = new int[arraySize];
+        maxGenerations = arraySize;
+    }
+
     private void CreateSprites()
     {
+        Vector2 spriteStartPosition = new Vector2(arraySize / 2, maxGenerations / 2 + 2);
         for (int i = 0; i < arraySize * maxGenerations * 0.5f; i++)
         {
             var sprite = Instantiate(image, spriteStartPosition, Quaternion.identity, this.transform);
@@ -82,13 +99,40 @@ public class CA : MonoBehaviour
     {
         for (int generation = 0; generation < maxGenerations; generation++)
         {
-            DrawNewRow(generation);
+            DrawRow(generation);
             GenerateRow();
             Array.Copy(nextgen, cells, arraySize); // cells = nextgen; ===> pra versao anterior
         }
     }
 
-    private int[] nextgen = new int[arraySize];
+    private void DrawRow(int yPos)
+    {
+        Vector2 cellPosition = Vector2.zero;
+
+        for (int i = 1; i < arraySize - 1; i++)
+        {
+            if (cells[i] == 1)
+            {
+                cellPosition.x = i;
+                cellPosition.y = -yPos;
+
+                if (sprites.Count <= 0)
+                {
+                    GameObject sprite = sprites.Dequeue();
+                    sprite.transform.position = cellPosition;
+                    sprite.SetActive(true);
+                    usedSprites.Add(sprite);
+                }
+                else
+                {
+                    GameObject sprite = Instantiate(image, cellPosition, Quaternion.identity, this.transform);
+                    sprite.SetActive(true);
+                    usedSprites.Add(sprite);
+                }
+            }
+        }
+    }
+
     private void GenerateRow()
     {
         for (int i = 1; i < arraySize - 1; i++) // ignores borders
@@ -111,35 +155,6 @@ public class CA : MonoBehaviour
         if (a == 0 && b == 0 && c == 1) return ruleset[6];
         if (a == 0 && b == 0 && c == 0) return ruleset[7];
         return 999;
-    }
-
- 
-    private void DrawNewRow(int yPos)
-    {
-        Vector2 cellPosition = Vector2.zero;
-
-        for (int i = 1; i < arraySize - 1; i++)
-        {
-            if (cells[i] == 1)
-            {
-                cellPosition.x = i * pixelDistance;
-                cellPosition.y = -yPos * pixelDistance;
-
-                if (sprites.Count <= 0)
-                {
-                    GameObject sprite = sprites.Dequeue();
-                    sprite.transform.position = cellPosition; 
-                    sprite.SetActive(true);
-                    usedSprites.Add(sprite);
-                }
-                else
-                {
-                    GameObject sprite = Instantiate(image, cellPosition, Quaternion.identity, this.transform);
-                    sprite.SetActive(true);
-                    usedSprites.Add(sprite);
-                }
-            }
-        }
     }
 }
 
