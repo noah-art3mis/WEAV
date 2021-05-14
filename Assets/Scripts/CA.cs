@@ -12,9 +12,9 @@ public class CA : MonoBehaviour
     [SerializeField] public InputField ruleInput;
     [SerializeField] private Text ruleOutput;
     [SerializeField] private Text startOutput;
-    [SerializeField] private MyCamera myCamera;
 
     private SettingsManager settings;
+    private MyCamera myCamera;
 
     public static event Action<int[], string> settingsDone;
     public static string startInfo;
@@ -64,11 +64,11 @@ public class CA : MonoBehaviour
         }
     }
 
-    [UnityEditor.MenuItem("Tools/ResetGrid")]
     public void ResetGrid()
     {
         Array.Clear(ruleset, 0, ruleset.Length);
         Array.Clear(cells, 0, cells.Length);
+        Array.Clear(nextgen, 0, nextgen.Length);
 
         foreach (GameObject sprite in usedSprites)
         {
@@ -84,6 +84,7 @@ public class CA : MonoBehaviour
         {
             DrawNewRow(generation);
             GenerateRow();
+            Array.Copy(nextgen, cells, arraySize); // cells = nextgen; ===> pra versao anterior
         }
     }
 
@@ -97,7 +98,6 @@ public class CA : MonoBehaviour
             int right = cells[i + 1];
             nextgen[i] = ApplyRuleset(left, me, right);
         }
-        cells = nextgen;
     }
 
     private int ApplyRuleset(int a, int b, int c)
@@ -118,7 +118,7 @@ public class CA : MonoBehaviour
     {
         Vector2 cellPosition = Vector2.zero;
 
-        for (int i = 0; i < arraySize; i++)
+        for (int i = 1; i < arraySize - 1; i++)
         {
             if (cells[i] == 1)
             {

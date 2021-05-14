@@ -1905,6 +1905,7 @@ GameObject:
   - component: {fileID: 869969522}
   - component: {fileID: 869969523}
   - component: {fileID: 869969524}
+  - component: {fileID: 869969525}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -1928,7 +1929,6 @@ MonoBehaviour:
   ruleInput: {fileID: 1213128057}
   ruleOutput: {fileID: 1727979398}
   startOutput: {fileID: 1521094437}
-  ui: {fileID: 1534441251}
   myCamera: {fileID: 0}
 --- !u!4 &869969521
 Transform:
@@ -1990,6 +1990,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2058ece33079ac448789d73f880c955, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &869969525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 869969519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90fef6e5f18096e488915f04d2e97654, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ui: {fileID: 1534441251}
 --- !u!1 &891481332
 GameObject:
   m_ObjectHideFlags: 0
@@ -3968,7 +3981,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 126.5, y: -153.2}
-  m_SizeDelta: {x: 233.69017, y: 290.58755}
+  m_SizeDelta: {x: 234, y: 291}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1534441253
 MonoBehaviour:
