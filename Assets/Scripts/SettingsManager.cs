@@ -105,7 +105,7 @@ public class SettingsManager : MonoBehaviour
 
     private void ShowError(string text)
     {
-        ca.Reset();
+        ca.ResetGrid();
         errorPanelText.text = text;
         errorPanel.SetActive(true);
     }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 
 public class CA : MonoBehaviour
 {
@@ -12,38 +13,38 @@ public class CA : MonoBehaviour
     [SerializeField] private Text ruleOutput;
     [SerializeField] private Text startOutput;
     [SerializeField] private GameObject ui;
+    [SerializeField] private MyCamera myCamera;
 
     private SettingsManager settings;
     private GameObject cellsParent;
-    private Camera _camera;
 
     public static event Action<int[], string> settingsDone;
     public static string startInfo;
 
     [Header("Settings")]
     public static int maxGenerations = 100;
-    public static int arraySize = 100;
+    public static int arraySize = maxGenerations; //maybe change
 
     public static int[] cells = new int[arraySize];
     public static int[] ruleset = new int[8];
 
-    private float pixelDistance = 0.01f;
+    Queue<GameObject> sprites = new Queue<GameObject>();
+    List<GameObject> usedSprites = new List<GameObject>();
+
+    public static float pixelDistance = 0.01f;
 
     private void Start()
     {
         settings = GetComponent<SettingsManager>();
+        myCamera = GetComponent<MyCamera>();
 
-        _camera = Camera.main;
-
-        arraySize = maxGenerations; //now is a square. maybe rectangle in future
+        CreateSprites();
     }
 
     public void Run(string upOrDown)
     {
-        ResetCamera();
-        Reset();
-
-        CreateSprites();
+        myCamera.ResetCamera();
+        ResetGrid();
 
         settings.ComputeSettings();
         ruleset = settings.GetRuleset(upOrDown);
@@ -54,41 +55,43 @@ public class CA : MonoBehaviour
         UpdateCells();
     }
 
+    Vector2 spriteStartPosition = new Vector2(arraySize / 2 * pixelDistance, maxGenerations / 2 * pixelDistance + 2 * pixelDistance);
     private void CreateSprites()
     {
-        throw new NotImplementedException();
+        for (int i = 0; i < arraySize * maxGenerations; i++)
+        {
+            var sprite = Instantiate(image, spriteStartPosition, Quaternion.identity, this.transform);
+            sprite.SetActive(false); 
+            sprites.Enqueue(sprite);
+        }
     }
 
-    private void ResetCamera()
-    {
-        Vector2 cameraPosition = Vector2.zero;
-        cameraPosition.x = arraySize / 2 * pixelDistance;
-        cameraPosition.y = maxGenerations / 2 * pixelDistance - pixelDistance;
-        _camera.transform.position = new Vector2(cameraPosition.x, -cameraPosition.y);
-        _camera.orthographicSize = maxGenerations * pixelDistance * 0.5f; //fits camera vertically
-    }
-
-    public void Reset()
+    [UnityEditor.MenuItem("Tools/ResetGrid")]
+    public void ResetGrid()
     {
         Array.Clear(ruleset, 0, ruleset.Length);
         Array.Clear(cells, 0, cells.Length);
 
-        Destroy(GameObject.Find("Cell Container")); //memory leak
-        cellsParent = new GameObject("Cell Container");
-        cellsParent.transform.parent = transform;
+        foreach (GameObject sprite in usedSprites)
+        {
+            sprite.SetActive(false);
+            sprites.Enqueue(sprite);
+
+        }
+        usedSprites.Clear();
     }
 
     private void UpdateCells()
     {
         for (int generation = 0; generation < maxGenerations; generation++)
         {
-            Generate();
-            DrawNewGeneration(generation); 
+            DrawNewRow(generation);
+            GenerateRow();
         }
     }
 
     private int[] nextgen = new int[arraySize];
-    private void Generate()
+    private void GenerateRow()
     {
         for (int i = 1; i < arraySize - 1; i++) // ignores borders
         {
@@ -113,16 +116,31 @@ public class CA : MonoBehaviour
         return 999;
     }
 
-    Vector2 cellPosition = Vector2.zero;
-    private void DrawNewGeneration(int yPos)
+ 
+    private void DrawNewRow(int yPos)
     {
+        Vector2 cellPosition = Vector2.zero;
+
         for (int i = 0; i < arraySize; i++)
         {
             if (cells[i] == 1)
             {
                 cellPosition.x = i * pixelDistance;
                 cellPosition.y = -yPos * pixelDistance;
-                Instantiate(image, cellPosition, Quaternion.identity, cellsParent.transform); //memory
+
+                if (sprites.Count <= 0)
+                {
+                    GameObject sprite = sprites.Dequeue();
+                    sprite.transform.position = cellPosition; 
+                    sprite.SetActive(true);
+                    usedSprites.Add(sprite);
+                }
+                else
+                {
+                    GameObject sprite = Instantiate(image, cellPosition, Quaternion.identity, this.transform);
+                    sprite.SetActive(true);
+                    usedSprites.Add(sprite);
+                }
             }
         }
     }
