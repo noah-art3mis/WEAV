@@ -16,7 +16,6 @@ public class CA : MonoBehaviour
     [SerializeField] private MyCamera myCamera;
 
     private SettingsManager settings;
-    private GameObject cellsParent;
 
     public static event Action<int[], string> settingsDone;
     public static string startInfo;
@@ -58,7 +57,7 @@ public class CA : MonoBehaviour
     Vector2 spriteStartPosition = new Vector2(arraySize / 2 * pixelDistance, maxGenerations / 2 * pixelDistance + 2 * pixelDistance);
     private void CreateSprites()
     {
-        for (int i = 0; i < arraySize * maxGenerations; i++)
+        for (int i = 0; i < arraySize * maxGenerations * 0.5f; i++)
         {
             var sprite = Instantiate(image, spriteStartPosition, Quaternion.identity, this.transform);
             sprite.SetActive(false); 
@@ -76,7 +75,6 @@ public class CA : MonoBehaviour
         {
             sprite.SetActive(false);
             sprites.Enqueue(sprite);
-
         }
         usedSprites.Clear();
     }
