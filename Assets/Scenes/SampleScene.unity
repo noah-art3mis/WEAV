@@ -2397,7 +2397,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90fef6e5f18096e488915f04d2e97654, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ui: {fileID: 1534441251}
+  mainPanel: {fileID: 1534441251}
+  infoPanelRule: {fileID: 1727979398}
+  infoPanelStart: {fileID: 1521094437}
+  infoPanel: {fileID: 891481332}
 --- !u!1 &891481332
 GameObject:
   m_ObjectHideFlags: 0
@@ -4402,7 +4405,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Random or not
+  m_Text: '[Start Info]'
 --- !u!222 &1521094438
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4860,7 +4863,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Rule xxx
+  m_Text: '[Rule Info]'
 --- !u!222 &1727979399
 CanvasRenderer:
   m_ObjectHideFlags: 0

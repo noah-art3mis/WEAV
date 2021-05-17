@@ -7,7 +7,7 @@ public class InputManager : MonoBehaviour
 {
     CA ca;
     SettingsManager settings;
-    [SerializeField] private GameObject ui;
+    [SerializeField] private GameObject mainPanel;
     [SerializeField] private Text infoPanelRule;
     [SerializeField] private Text infoPanelStart;
     [SerializeField] private GameObject infoPanel;
@@ -33,33 +33,45 @@ public class InputManager : MonoBehaviour
                 ca.Run("down");
         }
 
-        if (Input.GetKeyDown("tab"))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (ui.activeSelf)
-                ui.SetActive(false);
+            if (mainPanel.activeSelf)
+                mainPanel.SetActive(false);
             else
-                ui.SetActive(true);
+                mainPanel.SetActive(true);
+        }
+
+        if (Input.GetKeyDown(KeyCode.CapsLock))
+        {
+            if (infoPanel.activeSelf)
+                infoPanel.SetActive(false);
+            else
+                infoPanel.SetActive(true);
         }
 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            string directory = System.IO.Directory.GetCurrentDirectory() + "/Screenshots/";
-
-            if (!System.IO.Directory.Exists(directory))
-            {
-                System.IO.Directory.CreateDirectory(directory);
-                Debug.Log("created" + directory + "folder");
-            }
-
-            string date = System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
-            string filename = infoPanelRule.text.ToString() + "_" + infoPanelStart.text.ToString() + "_" + date + ".png";
-
-            string path = directory + filename;
-
-            infoPanelRule.transform.parent.gameObject.SetActive(false);
-            ScreenCapture.CaptureScreenshot(path);
-            infoPanelRule.transform.parent.gameObject.SetActive(true);
-            Debug.Log("saved ss to " + path); //make this show in UI
+            StartCoroutine(nameof(TakeScreenshot));
         }
+    }
+
+    IEnumerator TakeScreenshot()
+    {
+        infoPanel.SetActive(false);
+        yield return new WaitForEndOfFrame(); //wait one frame for info to disappear
+
+        string directory = System.IO.Directory.GetCurrentDirectory() + "/Screenshots/";
+
+        if (!System.IO.Directory.Exists(directory))
+            System.IO.Directory.CreateDirectory(directory);
+
+        string date = System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
+        string filename = infoPanelRule.text.ToString() + "_" + infoPanelStart.text.ToString() + "_" + date + ".png";
+        string path = directory + filename;
+        ScreenCapture.CaptureScreenshot(path, 4);
+        Debug.Log("saved ss to " + path); //make this show in UI
+
+        yield return new WaitForEndOfFrame();
+        infoPanel.SetActive(true);
     }
 }
