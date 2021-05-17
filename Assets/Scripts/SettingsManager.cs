@@ -47,9 +47,10 @@ public class SettingsManager : MonoBehaviour
             return 0;
 
         if (scrollSpeed.text == "")
-            scrollSpeed.text = "0,08";
+            scrollSpeed.text = "20";
             
-        return float.Parse(scrollSpeed.text);
+        float speed = 1 / float.Parse(scrollSpeed.text);
+        return speed;
     }
 
     public int[] GetRuleset(string parameter)
