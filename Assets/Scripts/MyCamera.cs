@@ -16,8 +16,8 @@ public class MyCamera : MonoBehaviour
 
     public void ResetCamera()
     {
-        float x = ca.arraySize / 2;
-        float y = ca.maxGenerations / 2;
+        float x = ca.arraySize / 2 - 0.5f;
+        float y = ca.maxGenerations / 2 - 0.5f;
         _camera.transform.position = new Vector2(x, -y);
         _camera.orthographicSize = ca.maxGenerations * 0.5f + sizeMod; //fits camera vertically
     }

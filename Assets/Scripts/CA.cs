@@ -57,7 +57,7 @@ public class CA : MonoBehaviour
 
         settingsDone?.Invoke(ruleset, startInfo);
 
-        UpdateCells();
+        UpdateCells(settings.scrolling);
     }
 
     private void ComputeSize(int arraySizeInput)
@@ -87,7 +87,7 @@ public class CA : MonoBehaviour
         Array.Clear(cells, 0, cells.Length);
         Array.Clear(nextgen, 0, nextgen.Length);
 
-        foreach (GameObject sprite in usedSprites)
+        foreach (GameObject sprite in usedSprites) //while < arraysize * arraysize?
         {
             sprite.SetActive(false);
             sprites.Enqueue(sprite);
@@ -95,13 +95,20 @@ public class CA : MonoBehaviour
         usedSprites.Clear();
     }
 
-    private void UpdateCells()
+    private void UpdateCells(bool scrolling)
     {
-        for (int generation = 0; generation < maxGenerations; generation++)
+        if (!scrolling)
         {
-            DrawRow(generation);
-            GenerateRow();
-            Array.Copy(nextgen, cells, arraySize); // cells = nextgen; ===> pra versao anterior
+            for (int generation = 0; generation < maxGenerations; generation++)
+            {
+                DrawRow(generation);
+                GenerateRow();
+                Array.Copy(nextgen, cells, arraySize); // cells = nextgen; ===> pra versao anterior
+            }
+        }
+        else
+        {
+
         }
     }
 
@@ -109,7 +116,7 @@ public class CA : MonoBehaviour
     {
         Vector2 cellPosition = Vector2.zero;
 
-        for (int i = 1; i < arraySize - 1; i++)
+        for (int i = 0; i < arraySize; i++)
         {
             if (cells[i] == 1)
             {
@@ -135,11 +142,12 @@ public class CA : MonoBehaviour
 
     private void GenerateRow()
     {
-        for (int i = 1; i < arraySize - 1; i++) // ignores borders
+        for (int i = 0; i < arraySize; i++)
         {
-            int left = cells[i - 1];
-            int me = cells[i];
-            int right = cells[i + 1];
+            //wrap around
+            int left = cells[(i - 1 + cells.Length) % cells.Length];
+            int me = cells[(i + 0 + cells.Length) % cells.Length];
+            int right = cells[(i + 1 + cells.Length) % cells.Length];
             nextgen[i] = ApplyRuleset(left, me, right);
         }
     }
