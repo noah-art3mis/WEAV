@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CA : MonoBehaviour
 {
@@ -22,12 +23,13 @@ public class CA : MonoBehaviour
     [Header("Settings")]
     public int arraySize;
     public int maxGenerations;
+    public float repeatRate = 0.1f;
 
     public static int[] ruleset = new int[8];
     private int[] cells;
     private int[] nextgen;
 
-    Queue<GameObject> sprites = new Queue<GameObject>();
+    Queue<GameObject> spritePool = new Queue<GameObject>();
     List<GameObject> usedSprites = new List<GameObject>();
 
     public static float pixelDistance;
@@ -47,7 +49,7 @@ public class CA : MonoBehaviour
 
     public void Run(string upOrDown)
     {
-        myCamera.ResetCamera();
+
         ResetGrid();
 
         settings.ComputeSettings();
@@ -77,22 +79,29 @@ public class CA : MonoBehaviour
         {
             var sprite = Instantiate(image, spriteStartPosition, Quaternion.identity, this.transform);
             sprite.SetActive(false); 
-            sprites.Enqueue(sprite);
+            spritePool.Enqueue(sprite);
         }
     }
 
     public void ResetGrid()
     {
+        myCamera.ResetCamera();
+
         Array.Clear(ruleset, 0, ruleset.Length);
         Array.Clear(cells, 0, cells.Length);
         Array.Clear(nextgen, 0, nextgen.Length);
+        
+        CancelInvoke();
 
-        foreach (GameObject sprite in usedSprites) //while < arraysize * arraysize?
-        {
-            sprite.SetActive(false);
-            sprites.Enqueue(sprite);
-        }
-        usedSprites.Clear();
+        foreach (GameObject sprite in usedSprites.ToList()) //performance melhor que o loop ao contrario e o clear
+            BackToPool(sprite);
+    }
+
+    private void BackToPool(GameObject gameObject)
+    {
+        gameObject.SetActive(false);
+        spritePool.Enqueue(gameObject);
+        usedSprites.Remove(gameObject);
     }
 
     private void UpdateCells(bool scrolling)
@@ -108,8 +117,40 @@ public class CA : MonoBehaviour
         }
         else
         {
-
+            InvokeRepeating(nameof(UpdateScrolling), repeatRate, repeatRate);
         }
+    }
+
+    private void UpdateScrolling()
+    {
+        int gen = 0;
+        gen++;
+
+        DrawRow(maxGenerations);
+        ScrollUp();
+        GenerateRow();
+        Array.Copy(nextgen, cells, arraySize);
+    }
+
+    private void ScrollUp()
+    {
+        for (int i = usedSprites.Count - 1; i >= 0; i--)
+        {
+            usedSprites[i].transform.position += new Vector3(0, 1, 0);
+            
+            if (usedSprites[i].transform.position.y > 0)
+                BackToPool(usedSprites[i]);
+        }
+
+        //foreach (GameObject sprite in usedSprites.ToList())
+        //{
+        //    sprite.transform.position += new Vector3(0, 1, 0);
+
+        //    if (sprite.transform.position.y > 0)
+        //    {
+        //        BackToPool(sprite);
+        //    }
+        //}
     }
 
     private void DrawRow(int yPos)
@@ -123,9 +164,9 @@ public class CA : MonoBehaviour
                 cellPosition.x = i;
                 cellPosition.y = -yPos;
 
-                if (sprites.Count <= 0)
+                if (spritePool.Count > 0)
                 {
-                    GameObject sprite = sprites.Dequeue();
+                    GameObject sprite = spritePool.Dequeue();
                     sprite.transform.position = cellPosition;
                     sprite.SetActive(true);
                     usedSprites.Add(sprite);
