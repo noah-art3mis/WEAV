@@ -9,11 +9,12 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private Toggle randomRulesetToggle;
     [SerializeField] private Dropdown startDropdown;
     [SerializeField] private Dropdown modeDropdown;
+    [SerializeField] private InputField scrollSpeed;
     [SerializeField] private InputField inputFieldSize;
     [SerializeField] private Button runButton;
     [SerializeField] private GameObject errorPanel;
     [SerializeField] private Text errorPanelText;
-
+    
     private CA ca;
 
     [Header("Settings")]
@@ -38,6 +39,17 @@ public class SettingsManager : MonoBehaviour
         if (modeDropdown.value == 1) scrolling = true;
         if (randomRulesetToggle.isOn == true) randomRuleset = true;
         if (randomRulesetToggle.isOn == false) randomRuleset = false;
+    }
+
+    public float GetScrollSpeed()
+    {
+        if (!scrolling)
+            return 0;
+
+        if (scrollSpeed.text == "")
+            scrollSpeed.text = "0,08";
+            
+        return float.Parse(scrollSpeed.text);
     }
 
     public int[] GetRuleset(string parameter)
@@ -89,12 +101,6 @@ public class SettingsManager : MonoBehaviour
             inputFieldSize.text = "100";
 
         int size = int.Parse(inputFieldSize.text);
-
-        //if (size > 300 || size < 30)
-        //{
-        //    ShowError("Size must be a number between 30 and 300");
-        //    return size;
-        //}
 
         return size;
     }

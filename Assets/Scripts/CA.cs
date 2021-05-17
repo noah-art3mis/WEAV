@@ -54,6 +54,8 @@ public class CA : MonoBehaviour
 
         settings.ComputeSettings();
         ComputeSize(settings.GetSize());
+
+        repeatRate = settings.GetScrollSpeed();
         ruleset = settings.GetRuleset(upOrDown);
         cells = settings.SetFirstGeneration(arraySize);
 
