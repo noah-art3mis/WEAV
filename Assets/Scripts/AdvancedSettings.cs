@@ -8,7 +8,7 @@ public class AdvancedSettings : MonoBehaviour
         GameObject[] array = GameObject.FindGameObjectsWithTag("Advanced Setting");
     }
 
-    public void ToggleActive(GameObject[] array)
+    public static void ToggleActive(GameObject[] array)
     {
         foreach (GameObject item in array)
         {

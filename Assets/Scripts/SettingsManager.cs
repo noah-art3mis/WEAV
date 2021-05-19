@@ -5,12 +5,13 @@ using UnityEngine;
 public class SettingsManager : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private InputField inputFieldRuleset;
-    [SerializeField] private Toggle randomRulesetToggle;
-    [SerializeField] private Dropdown startDropdown;
+    [SerializeField] private Dropdown rulesetDropdown;
+    [SerializeField] private InputField rulesetInputField;
     [SerializeField] private Dropdown modeDropdown;
     [SerializeField] private InputField scrollSpeed;
-    [SerializeField] private InputField inputFieldSize;
+    [SerializeField] private Dropdown sizeDropdown;
+    [SerializeField] private InputField sizeInputField;
+    [SerializeField] private Dropdown startDropdown;
     [SerializeField] private Button runButton;
     [SerializeField] private GameObject errorPanel;
     [SerializeField] private Text errorPanelText;
@@ -18,32 +19,32 @@ public class SettingsManager : MonoBehaviour
     private CA ca;
 
     [Header("Settings")]
-    public bool randomRuleset;
-    public bool randomStart;
-    public bool scrolling;
+    public bool isRandomRuleset;
+    public bool isScrolling;
+    public bool isFullscreen;
+    public bool isRandomStart;
 
     private void Start()
     {
         ca = GetComponent<CA>();
-
-        randomRuleset = false;
-        randomStart = false;
-        scrolling = false;
     }
 
     public void ComputeSettings()
     {
-        if (startDropdown.value == 0) randomStart = false;
-        if (startDropdown.value == 1) randomStart = true;
-        if (modeDropdown.value == 0) scrolling = false;
-        if (modeDropdown.value == 1) scrolling = true;
-        if (randomRulesetToggle.isOn == true) randomRuleset = true;
-        if (randomRulesetToggle.isOn == false) randomRuleset = false;
+        if (rulesetDropdown.value == 0) isRandomRuleset = true;
+        if (rulesetDropdown.value == 1) isRandomRuleset = false;
+        if (modeDropdown.value == 0) isScrolling = true;
+        if (modeDropdown.value == 1) isScrolling = false;
+        if (sizeDropdown.value == 0) isFullscreen = true;
+        if (sizeDropdown.value == 0) isFullscreen = true;
+        if (startDropdown.value == 0) isRandomStart = true;
+        if (startDropdown.value == 1) isRandomStart = false;
     }
+
 
     public float GetScrollSpeed()
     {
-        if (!scrolling)
+        if (!isScrolling)
             return 0;
 
         if (scrollSpeed.text == "")
@@ -57,22 +58,23 @@ public class SettingsManager : MonoBehaviour
     {
         int[] ruleset = new int[CA.ruleset.Length];
 
-        if (randomRuleset)
+        if (isRandomRuleset)
         {
             for (int i = 0; i < ruleset.Length; i++)
             {
                 ruleset[i] = Random.Range(0, 2);
             }
+            return ruleset;
         }
         else
         {
-            if (inputFieldRuleset.text == "")
+            if (rulesetInputField.text == "")
             {
                 ShowError("Must input a number between 0 and 255");
                 return ruleset;
             }
 
-            int rulesetDecimal = int.Parse(inputFieldRuleset.text);
+            int rulesetDecimal = int.Parse(rulesetInputField.text);
 
             if (rulesetDecimal > 255 || rulesetDecimal < 0)
             {
@@ -83,37 +85,53 @@ public class SettingsManager : MonoBehaviour
             if (parameter == "up")
             {
                 rulesetDecimal++;
-                inputFieldRuleset.text = rulesetDecimal.ToString();
+                rulesetInputField.text = rulesetDecimal.ToString();
             }
             if (parameter == "down")
             {
                 rulesetDecimal--;
-                inputFieldRuleset.text = rulesetDecimal.ToString();
+                rulesetInputField.text = rulesetDecimal.ToString();
             }
 
             ruleset = BinaryConverter.RulesetDecimaltoBinary(rulesetDecimal);
+            return ruleset;
         }
-        return ruleset;
     }
 
     public int GetSize()
     {
-        if (inputFieldSize.text == "")
-            inputFieldSize.text = "100";
+        int size;
+        if (isFullscreen)
+        {
+            int h = Screen.height;
+            int w = Screen.width;
+            //TODO
+            return w;
+        }
+        else
+        {
+            if (sizeInputField.text == "")
+            {
+                sizeInputField.text = "150";
+                return 150;
+            }
 
-        int size = int.Parse(inputFieldSize.text);
+            size = int.Parse(sizeInputField.text);
 
-        if (size > 500)
-            size = 500;
-
-        return size;
+            if (size > 400)
+            {
+                ShowError("Size too big. Try less than 400.");
+                return 50;
+            }
+            return size;
+        }
     }
 
     public int[] SetFirstGeneration(int arraySize)
     {
         int[] firstGen = new int[arraySize];
 
-        if (randomStart)
+        if (isRandomStart)
         {
             for (int i = 0; i < firstGen.Length; i++)
             {
