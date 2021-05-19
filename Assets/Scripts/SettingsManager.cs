@@ -103,6 +103,9 @@ public class SettingsManager : MonoBehaviour
 
         int size = int.Parse(inputFieldSize.text);
 
+        if (size > 500)
+            size = 500;
+
         return size;
     }
 
