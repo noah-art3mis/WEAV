@@ -109,7 +109,7 @@ public class SettingsManager : MonoBehaviour
                 return ruleset;
             }
 
-            if (parameter == "up") 
+            if (parameter == "up")
             {
                 rulesetDecimal++;
                 rulesetInputField.text = rulesetDecimal.ToString();
@@ -124,8 +124,6 @@ public class SettingsManager : MonoBehaviour
             return ruleset;
         }
     }
-
-
 
     public int[] SetFirstGeneration(int arraySize)
     {

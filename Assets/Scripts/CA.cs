@@ -9,13 +9,14 @@ public class CA : MonoBehaviour
     //https://mathworld.wolfram.com/ElementaryCellularAutomaton.html
 
     [Header("Dependencies")]
-    [SerializeField] private GameObject image;
+    public GameObject image;
     [SerializeField] public InputField ruleInput;
     [SerializeField] private Text ruleOutput;
     [SerializeField] private Text startOutput;
 
     private SettingsManager settings;
     private MyCamera myCamera;
+    private CellUpdater updater;
 
     public static event Action<int[], string> settingsDone;
     public static string startInfo;
@@ -27,11 +28,11 @@ public class CA : MonoBehaviour
     public int maxGenerations;
 
     public static int[] ruleset = new int[Defaults.RULESET_SIZE];
-    private int[] cells;
-    private int[] nextgen;
+    public int[] cells;
+    public int[] nextgen;
 
-    Queue<GameObject> spritePool = new Queue<GameObject>();
-    List<GameObject> usedSprites = new List<GameObject>();
+    public Queue<GameObject> spritePool = new Queue<GameObject>();
+    public List<GameObject> usedSprites = new List<GameObject>();
 
     public static float pixelDistance;
 
@@ -39,6 +40,7 @@ public class CA : MonoBehaviour
     {
         settings = GetComponent<SettingsManager>();
         myCamera = GetComponent<MyCamera>();
+        updater = GetComponent<CellUpdater>();
 
         gridSize = new Vector2(Defaults.GRID_SIZE, Defaults.GRID_SIZE);
 
@@ -76,7 +78,7 @@ public class CA : MonoBehaviour
 
         settingsDone?.Invoke(ruleset, startInfo);
 
-        UpdateCells(settings.isScrolling);
+        updater.UpdateCells(ruleset, cells, settings.isScrolling);
     }
 
     public void ResetGrid()
@@ -88,129 +90,19 @@ public class CA : MonoBehaviour
         CancelInvoke();
 
         foreach (GameObject sprite in usedSprites.ToList()) //performance melhor que o loop ao contrario e o clear
-            BackToPool(sprite);
+            updater.BackToPool(sprite);
     }
 
     private void ComputeSize(Vector2 gridSize)
     {
         if (!(cells.Length == gridSize.x))
         {
-            cells = new int[(int)gridSize.x]
+            cells = new int[(int)gridSize.x];
             nextgen = new int[(int)gridSize.x];
         }
         arraySize = (int)gridSize.x;
         maxGenerations = (int)gridSize.y;
     }
 
-
-
-    private void BackToPool(GameObject gameObject)
-    {
-        gameObject.SetActive(false);
-        spritePool.Enqueue(gameObject);
-        usedSprites.Remove(gameObject);
-    }
-
-    private void UpdateCells(bool scrolling)
-    {
-        if (!scrolling)
-        {
-            for (int generation = 0; generation < maxGenerations; generation++)
-            {
-                DrawRow(generation);
-                GenerateRow();
-                Array.Copy(nextgen, cells, arraySize); // cells = nextgen; ===> pra versao anterior
-            }
-        }
-        else
-        {
-            InvokeRepeating(nameof(UpdateScrolling), repeatRate, repeatRate);
-        }
-    }
-
-    private void UpdateScrolling()
-    {
-        int gen = 0;
-        gen++;
-
-        DrawRow(maxGenerations);
-        ScrollUp();
-        GenerateRow();
-        Array.Copy(nextgen, cells, arraySize);
-    }
-
-    private void ScrollUp()
-    {
-        for (int i = usedSprites.Count - 1; i >= 0; i--)
-        {
-            usedSprites[i].transform.position += new Vector3(0, 1, 0);
-            
-            if (usedSprites[i].transform.position.y > 0)
-                BackToPool(usedSprites[i]);
-        }
-
-        //foreach (GameObject sprite in usedSprites.ToList())
-        //{
-        //    sprite.transform.position += new Vector3(0, 1, 0);
-
-        //    if (sprite.transform.position.y > 0)
-        //    {
-        //        BackToPool(sprite);
-        //    }
-        //}
-    }
-
-    private void DrawRow(int yPos)
-    {
-        Vector2 cellPosition = Vector2.zero;
-
-        for (int i = 0; i < arraySize; i++)
-        {
-            if (cells[i] == 1)
-            {
-                cellPosition.x = i;
-                cellPosition.y = -yPos;
-
-                if (spritePool.Count > 0)
-                {
-                    GameObject sprite = spritePool.Dequeue();
-                    sprite.transform.position = cellPosition;
-                    sprite.SetActive(true);
-                    usedSprites.Add(sprite);
-                }
-                else
-                {
-                    GameObject sprite = Instantiate(image, cellPosition, Quaternion.identity, this.transform);
-                    sprite.SetActive(true);
-                    usedSprites.Add(sprite);
-                }
-            }
-        }
-    }
-
-    private void GenerateRow()
-    {
-        for (int i = 0; i < arraySize; i++)
-        {
-            //wrap around
-            int left = cells[(i - 1 + cells.Length) % cells.Length];
-            int me = cells[(i + 0 + cells.Length) % cells.Length];
-            int right = cells[(i + 1 + cells.Length) % cells.Length];
-            nextgen[i] = ApplyRuleset(left, me, right);
-        }
-    }
-
-    private int ApplyRuleset(int a, int b, int c)
-    {
-        if (a == 1 && b == 1 && c == 1) return ruleset[0];
-        if (a == 1 && b == 1 && c == 0) return ruleset[1];
-        if (a == 1 && b == 0 && c == 1) return ruleset[2];
-        if (a == 1 && b == 0 && c == 0) return ruleset[3];
-        if (a == 0 && b == 1 && c == 1) return ruleset[4];
-        if (a == 0 && b == 1 && c == 0) return ruleset[5];
-        if (a == 0 && b == 0 && c == 1) return ruleset[6];
-        if (a == 0 && b == 0 && c == 0) return ruleset[7];
-        return 999;
-    }
 }
 
