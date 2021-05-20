@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Scripts/CellUpdater.cs.meta
+guid: 81e0ee41e4dcb954687dee0c16d3a7e9
+=======
 guid: 4d54fd2575b763c4d9388dddfc5f891f
+>>>>>>> 55c8b2226862c7dca2701a0467a5f5545eca65cf:Assets/Scripts/Defaults.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

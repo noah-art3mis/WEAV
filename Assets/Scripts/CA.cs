@@ -27,7 +27,7 @@ public class CA : MonoBehaviour
     public int arraySize;
     public int maxGenerations;
 
-    public static int[] ruleset = new int[Defaults.RULESET_SIZE];
+    public int[] ruleset = new int[Defaults.RULESET_SIZE];
     public int[] cells;
     public int[] nextgen;
 
@@ -78,7 +78,7 @@ public class CA : MonoBehaviour
 
         settingsDone?.Invoke(ruleset, startInfo);
 
-        updater.UpdateCells(ruleset, cells, settings.isScrolling);
+        updater.UpdateCells(ruleset, cells, nextgen, settings.isScrolling);
     }
 
     public void ResetGrid()

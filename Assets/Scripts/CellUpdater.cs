@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
 public class CellUpdater : MonoBehaviour
 {
@@ -11,7 +11,7 @@ public class CellUpdater : MonoBehaviour
         ca = GetComponent<CA>();
     }
 
-    public void UpdateCells(int[] ruleset, int[] cells, bool scrolling)
+    public void UpdateCells(int[] ruleset, int[] cells, int[] nextgen, bool scrolling)
     {
         if (!scrolling)
         {
@@ -19,7 +19,7 @@ public class CellUpdater : MonoBehaviour
             {
                 DrawRow(generation);
                 GenerateRow(ruleset, cells);
-                Array.Copy(ca.nextgen, ca.cells, ca.arraySize); // cells = nextgen; ===> pra versao anterior
+                Array.Copy(nextgen, cells, cells.Length); // cells = nextgen; ===> pra versao anterior
             }
         }
         else
@@ -28,23 +28,23 @@ public class CellUpdater : MonoBehaviour
         }
     }
 
-    private void UpdateScrolling(int[] ruleset, int[] cells, int[] nextgen, int arraySize)
+    private void UpdateScrolling()
     {
         DrawRow(ca.maxGenerations);
-        ScrollUp();
-        GenerateRow(ruleset, cells);
-        Array.Copy(nextgen, cells, arraySize);
+        ScrollUp(ca.usedSprites);
+        GenerateRow(ca.ruleset, ca.cells);
+        Array.Copy(ca.nextgen, ca.cells, ca.arraySize);
     }
 
-    private void ScrollUp()
+    private void ScrollUp(List<GameObject> usedSprites)
     {
-        for (int i = ca.usedSprites.Count - 1; i >= 0; i--)
+        for (int i = usedSprites.Count - 1; i >= 0; i--)
         {
-            ca.usedSprites[i].transform.position += new Vector3(0, 1, 0);
+            usedSprites[i].transform.position += new Vector3(0, 1, 0);
 
-            if (ca.usedSprites[i].transform.position.y > 0)
+            if (usedSprites[i].transform.position.y > 0)
             {
-                BackToPool(ca.usedSprites.[i]);
+                BackToPool(usedSprites[i]);
             }
         }
 
