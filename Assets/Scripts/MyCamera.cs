@@ -24,16 +24,6 @@ public class MyCamera : MonoBehaviour
 
     private void SetCameraOrthographicSize(Vector2 size)
     {
-        if (size.y >= size.x)
-        {
-            //vertical fit
-            _camera.orthographicSize = size.y / 2;
-        }
-        else
-        {
-            //horizontal fit
-            float differenceInSize = (size.x / size.y) / (Screen.width / Screen.height);
-            _camera.orthographicSize = size.y / 2 * differenceInSize;
-        }
+        _camera.orthographicSize = size.y / 2;
     }
 }

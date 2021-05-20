@@ -15,7 +15,7 @@ public class BinaryConverter : MonoBehaviour
 
     public static int[] RulesetDecimaltoBinary(int decimalNumber)
     {
-        int[] ruleset = new int[CA.ruleset.Length];
+        int[] ruleset = new int[Defaults.RULESET_SIZE];
         int remainder;
 
         if (decimalNumber > 255)

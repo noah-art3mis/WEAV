@@ -22,7 +22,7 @@ public class CA : MonoBehaviour
     public static string startInfo;
 
     [Header("Settings")]
-    public float repeatRate = 0.1f;
+    public float repeatRate;
     public Vector2 gridSize;
     public int arraySize;
     public int maxGenerations;

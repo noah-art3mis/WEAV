@@ -40,14 +40,15 @@ public class SettingsManager : MonoBehaviour
         if (modeDropdown.value == 1) isScrolling = false;
         if (sizeDropdown.value == 0) isFullscreen = true;
         if (sizeDropdown.value == 1) isFullscreen = false;
-        if (startDropdown.value == 0) isRandomStart = true;
-        if (startDropdown.value == 1) isRandomStart = false;
+        if (startDropdown.value == 0) isRandomStart = false;
+        if (startDropdown.value == 1) isRandomStart = true;
     }
 
     public Vector2 GetSize()
     {
         if (isFullscreen) //fit horizontal
         {
+            resolution = int.Parse(resolutionField.text);
             int h = Screen.height / resolution;
             int w = Screen.width / resolution;
             return new Vector2(w, h);
