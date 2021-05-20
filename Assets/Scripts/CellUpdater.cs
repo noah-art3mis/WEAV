@@ -28,12 +28,12 @@ public class CellUpdater : MonoBehaviour
         }
     }
 
-    private void UpdateScrolling()
+    private void UpdateScrolling(int[] ruleset, int[] cells, int[] nextgen, int arraySize)
     {
         DrawRow(ca.maxGenerations);
         ScrollUp();
-        GenerateRow(ca.ruleset, ca.cells);
-        Array.Copy(ca.nextgen, ca.cells, ca.arraySize);
+        GenerateRow(ruleset, cells);
+        Array.Copy(nextgen, cells, arraySize);
     }
 
     private void ScrollUp()
@@ -43,9 +43,12 @@ public class CellUpdater : MonoBehaviour
             ca.usedSprites[i].transform.position += new Vector3(0, 1, 0);
 
             if (ca.usedSprites[i].transform.position.y > 0)
+            {
                 BackToPool(ca.usedSprites.[i]);
+            }
         }
 
+        //test for performance
         //foreach (GameObject sprite in usedSprites.ToList())
         //{
         //    sprite.transform.position += new Vector3(0, 1, 0);
