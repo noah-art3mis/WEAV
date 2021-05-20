@@ -97,6 +97,17 @@ public class CA : MonoBehaviour
     {
         if (!(cells.Length == gridSize.x))
         {
+            cells = new int[(int)gridSize.x]
+            nextgen = new int[(int)gridSize.x];
+        }
+        arraySize = (int)gridSize.x;
+        maxGenerations = (int)gridSize.y;
+    }
+
+    private void ComputeSize(Vector2 gridSize)
+    {
+        if (!(cells.Length == gridSize.x))
+        {
             cells = new int[(int)gridSize.x];
             nextgen = new int[(int)gridSize.x];
         }
