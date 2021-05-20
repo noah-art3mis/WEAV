@@ -21,11 +21,12 @@ public class CA : MonoBehaviour
     public static string startInfo;
 
     [Header("Settings")]
+    public float repeatRate = 0.1f;
+    public Vector2 gridSize;
     public int arraySize;
     public int maxGenerations;
-    public float repeatRate = 0.1f;
 
-    public static int[] ruleset = new int[8];
+    public static int[] ruleset = new int[Defaults.RULESET_SIZE];
     private int[] cells;
     private int[] nextgen;
 
@@ -38,22 +39,36 @@ public class CA : MonoBehaviour
     {
         settings = GetComponent<SettingsManager>();
         myCamera = GetComponent<MyCamera>();
-        
-        arraySize = 100;
-        maxGenerations = arraySize;
-        cells = new int[arraySize];
-        nextgen = new int[arraySize];
 
-        CreateSprites();
+        gridSize = new Vector2(Defaults.GRID_SIZE, Defaults.GRID_SIZE);
+
+        arraySize = (int)gridSize.x;
+        maxGenerations = (int)gridSize.y;
+
+        cells = new int[arraySize];
+        nextgen = new int[cells.Length];
+
+        CreateSprites(Defaults.SPRITE_POOL_SIZE);
+    }
+
+    private void CreateSprites(int poolSize)
+    {
+        for (int i = 0; i < poolSize; i++)
+        {
+            var sprite = Instantiate(image, Vector2.zero, Quaternion.identity, this.transform);
+            sprite.SetActive(false);
+            spritePool.Enqueue(sprite);
+        }
     }
 
     public void Run(string upOrDown)
     {
-
         ResetGrid();
 
         settings.ComputeSettings();
-        ComputeSize(settings.GetSize());
+        gridSize = settings.GetSize();
+        ComputeSize(gridSize);
+        myCamera.SetCamera(gridSize);
 
         repeatRate = settings.GetScrollSpeed();
         ruleset = settings.GetRuleset(upOrDown);
@@ -61,43 +76,33 @@ public class CA : MonoBehaviour
 
         settingsDone?.Invoke(ruleset, startInfo);
 
-        UpdateCells(settings.scrolling);
-    }
-
-    private void ComputeSize(int arraySizeInput)
-    {
-        if (arraySizeInput == arraySize) return;
-
-        arraySize = arraySizeInput; 
-        cells = new int[arraySize];
-        nextgen = new int[arraySize];
-        maxGenerations = arraySize;
-    }
-
-    private void CreateSprites()
-    {
-        Vector2 spriteStartPosition = new Vector2(arraySize / 2, maxGenerations / 2 + 2);
-        for (int i = 0; i < arraySize * maxGenerations * 0.5f; i++)
-        {
-            var sprite = Instantiate(image, spriteStartPosition, Quaternion.identity, this.transform);
-            sprite.SetActive(false); 
-            spritePool.Enqueue(sprite);
-        }
+        UpdateCells(settings.isScrolling);
     }
 
     public void ResetGrid()
     {
-        myCamera.ResetCamera();
-
         Array.Clear(ruleset, 0, ruleset.Length);
         Array.Clear(cells, 0, cells.Length);
         Array.Clear(nextgen, 0, nextgen.Length);
-        
+
         CancelInvoke();
 
         foreach (GameObject sprite in usedSprites.ToList()) //performance melhor que o loop ao contrario e o clear
             BackToPool(sprite);
     }
+
+    private void ComputeSize(Vector2 gridSize)
+    {
+        if (!(cells.Length == gridSize.x))
+        {
+            cells = new int[(int)gridSize.x]
+            nextgen = new int[(int)gridSize.x];
+        }
+        arraySize = (int)gridSize.x;
+        maxGenerations = (int)gridSize.y;
+    }
+
+
 
     private void BackToPool(GameObject gameObject)
     {

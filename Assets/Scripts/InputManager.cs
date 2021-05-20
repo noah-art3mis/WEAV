@@ -25,7 +25,7 @@ public class InputManager : MonoBehaviour
             ca.Run("");
         }
 
-        if (!settings.randomRuleset)
+        if (!settings.isRandomRuleset)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow))
                 ca.Run("up");

@@ -3,27 +3,37 @@
 public class MyCamera : MonoBehaviour
 {
     private Camera _camera;
-    public float resolution = 1;
-    public float sizeMod = 0;
-
-    CA ca;
 
     private void Start()
     {
         _camera = Camera.main;
-        ca = GetComponent<CA>();
     }
 
-    public void ResetCamera()
+    public void SetCamera(Vector2 size)
     {
-        float x = ca.arraySize / 2 - 0.5f;
-        float y = ca.maxGenerations / 2 - 0.5f;
+        SetCameraPosition(size);
+        SetCameraOrthographicSize(size);
+    }
+
+    private void SetCameraPosition(Vector2 size)
+    {
+        float x = size.x / 2 - 0.5f;
+        float y = size.y / 2 - 0.5f;
         _camera.transform.position = new Vector2(x, -y);
-        _camera.orthographicSize = ca.maxGenerations * 0.5f + sizeMod; //fits camera vertically
     }
 
-    private void Update()
+    private void SetCameraOrthographicSize(Vector2 size)
     {
-        ResetCamera();
+        if (size.y >= size.x)
+        {
+            //vertical fit
+            _camera.orthographicSize = size.y / 2;
+        }
+        else
+        {
+            //horizontal fit
+            float differenceInSize = (size.x / size.y) / (Screen.width / Screen.height);
+            _camera.orthographicSize = size.y / 2 * differenceInSize;
+        }
     }
 }

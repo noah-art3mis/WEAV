@@ -11,6 +11,7 @@ public class SettingsManager : MonoBehaviour
     [SerializeField] private InputField scrollSpeed;
     [SerializeField] private Dropdown sizeDropdown;
     [SerializeField] private InputField sizeInputField;
+    [SerializeField] private InputField resolutionField;
     [SerializeField] private Dropdown startDropdown;
     [SerializeField] private Button runButton;
     [SerializeField] private GameObject errorPanel;
@@ -23,10 +24,12 @@ public class SettingsManager : MonoBehaviour
     public bool isScrolling;
     public bool isFullscreen;
     public bool isRandomStart;
+    public int resolution;
 
     private void Start()
     {
         ca = GetComponent<CA>();
+        resolution = Defaults.RESOLUTION;
     }
 
     public void ComputeSettings()
@@ -36,11 +39,35 @@ public class SettingsManager : MonoBehaviour
         if (modeDropdown.value == 0) isScrolling = true;
         if (modeDropdown.value == 1) isScrolling = false;
         if (sizeDropdown.value == 0) isFullscreen = true;
-        if (sizeDropdown.value == 0) isFullscreen = true;
+        if (sizeDropdown.value == 1) isFullscreen = false;
         if (startDropdown.value == 0) isRandomStart = true;
         if (startDropdown.value == 1) isRandomStart = false;
     }
 
+    public Vector2 GetSize()
+    {
+        if (isFullscreen) //fit horizontal
+        {
+            int h = Screen.height / resolution;
+            int w = Screen.width / resolution;
+            return new Vector2(w, h);
+        }
+        else //fit vertical
+        {
+            if (sizeInputField.text == "")
+                sizeInputField.text = Defaults.GRID_SIZE.ToString();
+
+            int size = int.Parse(sizeInputField.text);
+
+            if (size > 400)
+            {
+                ShowError("Size too big. Try less than 400.");
+                return new Vector2(50, 50);
+            }
+
+            return new Vector2(size, size);
+        }
+    }
 
     public float GetScrollSpeed()
     {
@@ -48,7 +75,7 @@ public class SettingsManager : MonoBehaviour
             return 0;
 
         if (scrollSpeed.text == "")
-            scrollSpeed.text = "20";
+            scrollSpeed.text = Defaults.SCROLL_SPEED.ToString();
             
         float speed = 1 / float.Parse(scrollSpeed.text);
         return speed;
@@ -56,7 +83,7 @@ public class SettingsManager : MonoBehaviour
 
     public int[] GetRuleset(string parameter)
     {
-        int[] ruleset = new int[CA.ruleset.Length];
+        int[] ruleset = new int[Defaults.RULESET_SIZE];
 
         if (isRandomRuleset)
         {
@@ -82,7 +109,7 @@ public class SettingsManager : MonoBehaviour
                 return ruleset;
             }
 
-            if (parameter == "up")
+            if (parameter == "up") 
             {
                 rulesetDecimal++;
                 rulesetInputField.text = rulesetDecimal.ToString();
@@ -98,34 +125,7 @@ public class SettingsManager : MonoBehaviour
         }
     }
 
-    public int GetSize()
-    {
-        int size;
-        if (isFullscreen)
-        {
-            int h = Screen.height;
-            int w = Screen.width;
-            //TODO
-            return w;
-        }
-        else
-        {
-            if (sizeInputField.text == "")
-            {
-                sizeInputField.text = "150";
-                return 150;
-            }
 
-            size = int.Parse(sizeInputField.text);
-
-            if (size > 400)
-            {
-                ShowError("Size too big. Try less than 400.");
-                return 50;
-            }
-            return size;
-        }
-    }
 
     public int[] SetFirstGeneration(int arraySize)
     {
