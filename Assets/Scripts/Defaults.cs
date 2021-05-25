@@ -5,7 +5,7 @@ public class Defaults : MonoBehaviour
     //DEFAULTS
     public static int GRID_SIZE = 150;
     public static int RESOLUTION = 5;
-    public static int SCROLL_SPEED = 10;
+    public static int SCROLL_SPEED = 3;
 
     //CONSTANTS
     public static int RULESET_SIZE = 8;
