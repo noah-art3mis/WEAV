@@ -81,7 +81,7 @@ public class SettingsManager : MonoBehaviour
         if (!isScrolling)
             return 0;
 
-        if (scrollSpeed.text == "")
+        if (scrollSpeed.text == "") //see string.IsNullOrWhiteSpace
             scrollSpeed.text = Defaults.SCROLL_SPEED.ToString();
             
         float speed = 1 / float.Parse(scrollSpeed.text);
