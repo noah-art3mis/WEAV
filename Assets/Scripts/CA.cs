@@ -36,6 +36,8 @@ public class CA : MonoBehaviour
 
     public static float pixelDistance;
 
+    public bool errorFlag;
+
     private void Start()
     {
         settings = GetComponent<SettingsManager>();
@@ -76,10 +78,11 @@ public class CA : MonoBehaviour
         ruleset = settings.GetRuleset(upOrDown);
         cells = settings.SetFirstGeneration(arraySize);
 
+        if (CheckError()) return;
         settingsDone?.Invoke(ruleset, startInfo);
-
         updater.UpdateCells(ruleset, cells, nextgen, settings.isScrolling);
     }
+
 
     public void ResetGrid()
     {
@@ -102,6 +105,17 @@ public class CA : MonoBehaviour
         }
         arraySize = (int)gridSize.x;
         maxGenerations = (int)gridSize.y;
+    }
+
+    private bool CheckError()
+    {
+        if (errorFlag)
+        {
+            errorFlag = false;
+            return true;
+        }
+
+        return false;
     }
 }
 

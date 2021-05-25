@@ -48,9 +48,15 @@ public class SettingsManager : MonoBehaviour
     {
         if (isFullscreen) //fit horizontal
         {
-            resolution = int.Parse(resolutionField.text);
-            int h = Screen.height / resolution;
-            int w = Screen.width / resolution;
+
+            if (resolutionField.text == "")
+                resolutionField.text = Defaults.RESOLUTION.ToString();
+            else
+                resolution = int.Parse(resolutionField.text);
+            
+            float factor = Defaults.RESOLUTION_FACTOR;
+            float h = Screen.height * factor * resolution;
+            float w = Screen.width * factor * resolution;
             return new Vector2(w, h);
         }
         else //fit vertical
@@ -149,6 +155,7 @@ public class SettingsManager : MonoBehaviour
 
     private void ShowError(string text)
     {
+        ca.errorFlag = true;
         ca.ResetGrid();
         errorPanelText.text = text;
         errorPanel.SetActive(true);
