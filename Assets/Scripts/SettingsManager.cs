@@ -84,7 +84,7 @@ public class SettingsManager : MonoBehaviour
         if (scrollSpeed.text == "") //see string.IsNullOrWhiteSpace
             scrollSpeed.text = Defaults.SCROLL_SPEED.ToString();
             
-        float speed = 1 / float.Parse(scrollSpeed.text);
+        float speed = Defaults.SPEED_MODIFIER * float.Parse(scrollSpeed.text);
         return speed;
     }
 
@@ -160,4 +160,6 @@ public class SettingsManager : MonoBehaviour
         errorPanelText.text = text;
         errorPanel.SetActive(true);
     }
+
+
 }

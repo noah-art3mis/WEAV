@@ -10,6 +10,9 @@ public class CellUpdater : MonoBehaviour
     {
         ca = GetComponent<CA>();
     }
+    private void OnEnable() => CA.StopInvoke += StopInvoke;
+    private void OnDisable() => CA.StopInvoke -= StopInvoke;
+    private void StopInvoke() => CancelInvoke(nameof(UpdateScrolling));
 
     public void UpdateCells(int[] ruleset, int[] cells, int[] nextgen, bool scrolling)
     {
@@ -47,17 +50,6 @@ public class CellUpdater : MonoBehaviour
                 BackToPool(usedSprites[i]);
             }
         }
-
-        //test for performance
-        //foreach (GameObject sprite in usedSprites.ToList())
-        //{
-        //    sprite.transform.position += new Vector3(0, 1, 0);
-
-        //    if (sprite.transform.position.y > 0)
-        //    {
-        //        BackToPool(sprite);
-        //    }
-        //}
     }
 
     private void DrawRow(int yPos)

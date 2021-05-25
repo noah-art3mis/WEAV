@@ -18,7 +18,8 @@ public class CA : MonoBehaviour
     private MyCamera myCamera;
     private CellUpdater updater;
 
-    public static event Action<int[], string> settingsDone;
+    public static event Action<int[], string> SettingsDone;
+    public static event Action StopInvoke;
     public static string startInfo;
 
     [Header("Settings")]
@@ -79,7 +80,7 @@ public class CA : MonoBehaviour
         cells = settings.SetFirstGeneration(arraySize);
 
         if (CheckError()) return;
-        settingsDone?.Invoke(ruleset, startInfo);
+        SettingsDone?.Invoke(ruleset, startInfo);
         updater.UpdateCells(ruleset, cells, nextgen, settings.isScrolling);
     }
 
@@ -90,7 +91,7 @@ public class CA : MonoBehaviour
         Array.Clear(cells, 0, cells.Length);
         Array.Clear(nextgen, 0, nextgen.Length);
 
-        CancelInvoke();
+        StopInvoke();
 
         foreach (GameObject sprite in usedSprites.ToList()) //performance melhor que o loop ao contrario e o clear
             updater.BackToPool(sprite);
