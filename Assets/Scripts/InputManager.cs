@@ -1,7 +1,7 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class InputManager : MonoBehaviour
 {
@@ -11,6 +11,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] private Text infoPanelRule;
     [SerializeField] private Text infoPanelStart;
     [SerializeField] private GameObject infoPanel;
+    [SerializeField] private GameObject ssPanel;
+    [SerializeField] private Text ssText;
 
     private void Start()
     {
@@ -60,20 +62,20 @@ public class InputManager : MonoBehaviour
         infoPanel.SetActive(false);
         yield return new WaitForEndOfFrame(); //wait one frame for info to disappear
 
-        string directory = System.IO.Directory.GetCurrentDirectory() + "/Screenshots/";
-
-        System.Environment.SpecialFolder.Desktop
-
-        if (!System.IO.Directory.Exists(directory))
-            System.IO.Directory.CreateDirectory(directory);
-
-        string date = System.DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
+        string directory = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+        string date = DateTime.Now.ToString("dd-MM-yyyy-HH-mm-ss");
         string filename = infoPanelRule.text.ToString() + "_" + infoPanelStart.text.ToString() + "_" + date + ".png";
-        string path = directory + filename;
-        ScreenCapture.CaptureScreenshot(path, 4);
-        Debug.Log("saved ss to " + path); //make this show in UI
+        string path = directory + "\\" + filename;
 
+        ScreenCapture.CaptureScreenshot(path, 4);
         yield return new WaitForEndOfFrame();
+
         infoPanel.SetActive(true);
+        ssPanel.SetActive(true);
+        ssText.text = "saved screenshot to Desktop";
+        yield return new WaitForSeconds(4f);
+        
+        ssPanel.SetActive(false);
+        ssText.text = "";
     }
 }
