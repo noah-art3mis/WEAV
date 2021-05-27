@@ -9,7 +9,7 @@ public class Defaults : MonoBehaviour
 
     //CONSTANTS
     public static int RULESET_SIZE = 8;
-    public static int SPRITE_POOL_SIZE = 150 * 150 / 2;
+    public static int SPRITE_POOL_SIZE = 20000;
     public static float RESOLUTION_FACTOR = 0.02f;
     public static float SPEED_MODIFIER = 0.01f;
 }
