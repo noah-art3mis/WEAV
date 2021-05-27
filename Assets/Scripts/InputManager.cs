@@ -62,6 +62,8 @@ public class InputManager : MonoBehaviour
 
         string directory = System.IO.Directory.GetCurrentDirectory() + "/Screenshots/";
 
+        System.Environment.SpecialFolder.Desktop
+
         if (!System.IO.Directory.Exists(directory))
             System.IO.Directory.CreateDirectory(directory);
 

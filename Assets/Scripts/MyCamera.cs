@@ -17,8 +17,8 @@ public class MyCamera : MonoBehaviour
 
     private void SetCameraPosition(Vector2 size)
     {
-        float x = size.x / 2 - 0.5f;
-        float y = size.y / 2 - 0.5f;
+        float x = size.x / 2;
+        float y = size.y / 2;
         _camera.transform.position = new Vector2(x, -y);
     }
 
