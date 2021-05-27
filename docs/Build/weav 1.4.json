@@ -1,0 +1,16 @@
+{
+"companyName": "noah-art3mis",
+"productName": "WEAV - Wolfram Elementary Cellular Automaton Visualization",
+"productVersion": "1.4",
+"dataUrl": "weav 1.4.data.unityweb",
+"wasmCodeUrl": "weav 1.4.wasm.code.unityweb",
+"wasmFrameworkUrl": "weav 1.4.wasm.framework.unityweb",
+"graphicsAPI": ["WebGL 2.0","WebGL 1.0"],
+"webglContextAttributes": {"preserveDrawingBuffer": false},
+"splashScreenStyle": "Light",
+"backgroundColor": "#828080",
+"cacheControl": {"default": "must-revalidate"},
+"developmentBuild": false,
+"multithreading": false,
+"unityVersion": "2019.4.21f1"
+}
