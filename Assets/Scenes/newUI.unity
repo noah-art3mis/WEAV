@@ -7042,7 +7042,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Arrow keys to cyclo through rulesets
+  m_Text: Arrow keys to cycle through rulesets
 --- !u!222 &1495882955
 CanvasRenderer:
   m_ObjectHideFlags: 0
