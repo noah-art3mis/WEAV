@@ -1,0 +1,12 @@
+﻿#pragma kernel CSMain
+
+RWTexture2D<float2> _Positions;
+
+uint Resolution;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    //1.6 didnt get uv
+    //setposition?
+}
