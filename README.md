@@ -1,6 +1,6 @@
-# WEAV
+# Wolfram Elementary Cellular Automaton Visualization (WEAV)
 
-Wolfram Elementary Cellular Automaton Visualization (WEAV) is an image generator. Generate any elementary cellular automata pattern.
+WEAV is an image generator. Generate any elementary cellular automata pattern. Play with the settings and explore the possibility space of elementary automata.
 
 Acess here: https://noah-art3mis.github.io/WEAV/
 
