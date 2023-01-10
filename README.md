@@ -1,9 +1,15 @@
 # Wolfram Elementary Cellular Automaton Visualization (WEAV)
 
-WEAV is an image generator. Generate any elementary cellular automata pattern. Play with the settings and explore the possibility space of elementary automata. 
+WEAV is a browser-based image generator. It creates a pattern using the elementary automata algorithm and some other parameters. Play with the settings and explore the possibility space of elementary automata. 
 
-Acess here: https://noah-art3mis.github.io/WEAV/
+Use it here: https://noah-art3mis.github.io/WEAV/
 
+<h1>Commands:</h1>
+  Enter: run WEAV with same settings (for use with random ruleset and/or random start)
+  Arrow keys: increase/decrease ruleset (scroll through to quickly see all the rulesets in order)
+  Tab: hide control panel
+  There is a command to save a screenshot, however Unity doesn't play nice with downloading things over the internet. For that, you might want to download the project.
+  
 Parameters:
   Ruleset:
       Choose a specific ruleset or use one at random.
@@ -13,12 +19,6 @@ Parameters:
       Render in either 19:6 format or square format, with variable resolution.
   Start:
       Seed the algorithm with a single cell or with a randomly generated array of cells. Sometimes renders vastly different results.
-
-Commands:
-  Enter: run WEAV with same settings (for use with random ruleset and/or random start)
-  Arrow keys: increase/decrease ruleset (scroll through to quickly see all the rulesets in order)
-  Tab: hide control panel
-  There is a command to save a screenshot, however Unity doesn't play nice with downloading things over the internet. For that, you might want to download the project.
 
 Interesting rulesets:
 
