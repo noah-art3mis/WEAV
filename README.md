@@ -6,7 +6,7 @@ WEAV is a browser-based image generator. It creates a pattern using elementary c
 
 Use it here: https://noah-art3mis.github.io/WEAV/
 
-It's an extremely simple algorithm (thus "elementary") that can generate complex behaviour. While most of the 256 rules are boring, a few are noteworthy. The star of the show is rule 30 and its organic-looking patterns. Rule 110 is turing complete; rule 90 is a fractal; rule 184 can be used for traffic flow modelling. Others (rule 75) just look cool.
+It's an extremely simple algorithm (thus "elementary") that can generate complex behaviour. While most of the 256 rules are boring, a few are noteworthy. The star of the show is rule 30 and its organic-looking patterns. Rule 110 is turing complete; rule 90 is a fractal; rule 184 can be used for traffic flow modelling. Some, such as rule 75, just look cool.
 
 ## Input
 #### Enter
