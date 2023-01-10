@@ -10,7 +10,7 @@ Use it here: https://noah-art3mis.github.io/WEAV/
   Tab: hide control panel
   There is a command to save a screenshot, however Unity doesn't play nice with downloading things over the internet. For that, you might want to download the project.
   
-Parameters:
+<h1>Parameters:</h1>
   Ruleset:
       Choose a specific ruleset or use one at random.
   Mode:
@@ -20,7 +20,7 @@ Parameters:
   Start:
       Seed the algorithm with a single cell or with a randomly generated array of cells. Sometimes renders vastly different results.
 
-Interesting rulesets:
+<h1>Interesting rulesets:</h1>
 
   rule 18
   rule 30 (https://en.wikipedia.org/wiki/Rule_30)
